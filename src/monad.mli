@@ -118,7 +118,7 @@ module Retry (E : sig
 end) : sig
   include MonadPlus
 
-  type 'a err = Error of (E.tag * (E.arg -> 'a m)) list * E.e | Result of 'a
+  type 'a err = Error of (E.tag * (E.arg -> 'a m)) list * E.e | Ok of 'a
 
   val throw : E.e -> 'a m
   val catch : 'a m -> (E.e -> 'a m) -> 'a m
@@ -187,12 +187,12 @@ end) : sig
   val eval : 'a m -> T.s -> 'a
 end
 
-module Error (E : sig
+module Result (E : sig
   type e
 
   val defaultError : e
 end) : sig
-  type 'a err = Error of E.e | Result of 'a
+  type 'a err = ('a, E.e) result
 
   include MonadPlus
 
@@ -321,13 +321,13 @@ module OptionT (M : BatInterfaces.Monad) : sig
   val lift : 'a M.m -> 'a m
 end
 
-module ErrorT (E : sig
+module ResultT (E : sig
   type e
 
   val defaultError : e
 end)
 (M : BatInterfaces.Monad) : sig
-  type 'a err = Error of E.e | Result of 'a
+  type 'a err = ('a, E.e) result
 
   include Monad
 

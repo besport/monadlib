@@ -350,57 +350,54 @@ module OptionT (M : BatInterfaces.Monad) = struct
   let lift x = M.map (fun x -> Some x) x
 end
 
-module Error (E : sig
+module Result (E : sig
   type e
 
   val defaultError : e
 end) =
 struct
-  type 'a err = Error of E.e | Result of 'a
+  type 'a err = ('a, E.e) result
 
   include MakePlus (struct
     type 'a m = 'a err
 
-    let return x = Result x
-    let bind x f = match x with Error e -> Error e | Result x -> f x
+    let return x = Ok x
+    let bind x f = match x with Error e -> Error e | Ok x -> f x
     let zero () = Error E.defaultError
-    let plus x y = match x with Error _ -> y | Result x -> Result x
+    let plus x y = match x with Error _ -> y | Ok x -> Ok x
     let null x = match x with Error _ -> true | _ -> false
   end)
 
   let throw e = Error e
-
-  let catch x handler =
-    match x with Error e -> handler e | Result x -> return x
-
+  let catch x handler = match x with Error e -> handler e | Ok x -> return x
   let run_error err = err
 end
 
-module ErrorT (E : sig
+module ResultT (E : sig
   type e
 
   val defaultError : e
 end)
 (M : BatInterfaces.Monad) =
 struct
-  type 'a err = Error of E.e | Result of 'a
+  type 'a err = ('a, E.e) result
 
   module M = Make (M)
 
   include MakePlus (struct
     type 'a m = 'a err M.m
 
-    let return x = M.return (Result x)
+    let return x = M.return (Ok x)
 
     let bind x f =
-      M.bind x (function Result x -> f x | Error e -> M.return (Error e))
+      M.bind x (function Ok x -> f x | Error e -> M.return (Error e))
 
     let zero () = M.return (Error E.defaultError)
     let plus x y = M.bind x (function Error _ -> y | x -> M.return x)
     let null _ = false
   end)
 
-  let lift x = M.map (fun x -> Result x) x
+  let lift x = M.map (fun x -> Ok x) x
   let throw e = M.return (Error e)
 
   let catch x handler =
@@ -417,22 +414,22 @@ module Retry (E : sig
   val defaultError : e
 end) =
 struct
-  type 'a err = Error of (E.tag * (E.arg -> 'a err)) list * E.e | Result of 'a
+  type 'a err = Error of (E.tag * (E.arg -> 'a err)) list * E.e | Ok of 'a
 
   include MakePlus (struct
     type 'a m = 'a err
 
-    let return x = Result x
+    let return x = Ok x
 
     let rec bind x f =
       match x with
-      | Result x -> f x
+      | Ok x -> f x
       | Error (retries, e) ->
           Error
             (BatList.map (fun (t, r) -> t, fun arg -> bind (r arg) f) retries, e)
 
     let zero () = Error ([], E.defaultError)
-    let plus x y = match x with Error _ -> y | Result x -> Result x
+    let plus x y = match x with Error _ -> y | Ok x -> Ok x
     let null x = match x with Error _ -> true | _ -> false
   end)
 
@@ -443,7 +440,7 @@ struct
   let throw e = Error ([], e)
 
   let catch x handler =
-    match x with Error (_, e) -> handler e | Result x -> return x
+    match x with Error (_, e) -> handler e | Ok x -> return x
 
   let run_retry err = err
 end
