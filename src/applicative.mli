@@ -43,6 +43,9 @@ module type Applicative = sig
   val map_a : ('a -> 'b m) -> 'a list -> 'b list m
   val ( <* ) : 'a m -> 'b m -> 'a m
   val ( >* ) : 'a m -> 'b m -> 'b m
+  val ignore : 'a m -> unit m
+  val onlyif : bool -> unit m -> unit m
+  val unless : bool -> unit m -> unit m
 end
 
 (** {6 Library Creation} *)

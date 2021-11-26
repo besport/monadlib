@@ -60,9 +60,6 @@ module type Monad = sig
   val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
   val join : 'a m m -> 'a m
   val filter_m : ('a -> bool m) -> 'a list -> 'a list m
-  val onlyif : bool -> unit m -> unit m
-  val unless : bool -> unit m -> unit m
-  val ignore : 'a m -> unit m
 end
 
 (** Library functions for monads with additional monoid structure. *)

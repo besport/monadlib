@@ -28,9 +28,6 @@ module type Monad = sig
   val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
   val join : 'a m m -> 'a m
   val filter_m : ('a -> bool m) -> 'a list -> 'a list m
-  val onlyif : bool -> unit m -> unit m
-  val unless : bool -> unit m -> unit m
-  val ignore : 'a m -> unit m
 end
 
 module type MonadPlus = sig
@@ -84,10 +81,6 @@ module Make (M : BatInterfaces.Monad) = struct
             xs
     in
     loop (return [])
-
-  let ignore m = lift1 (fun _ -> ()) m
-  let onlyif b m = if b then m else return ()
-  let unless b m = if b then return () else m
 end
 
 module MakePlus (M : BasePlus) = struct

@@ -26,6 +26,9 @@ module type Applicative = sig
   val map_a : ('a -> 'b m) -> 'a list -> 'b list m
   val ( <* ) : 'a m -> 'b m -> 'a m
   val ( >* ) : 'a m -> 'b m -> 'b m
+  val ignore : 'a m -> unit m
+  val onlyif : bool -> unit m -> unit m
+  val unless : bool -> unit m -> unit m
 end
 
 module Make (A : Base) = struct
@@ -45,6 +48,9 @@ module Make (A : Base) = struct
     | m :: ms -> lift2 (fun x xs -> x :: xs) m (sequence ms)
 
   let map_a f xs = sequence (List.map f xs)
+  let ignore m = lift1 (fun _ -> ()) m
+  let onlyif b m = if b then m else return ()
+  let unless b m = if b then return () else m
 end
 
 module Transform (A : Base) (Inner : Base) = struct
