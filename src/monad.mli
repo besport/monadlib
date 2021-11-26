@@ -56,6 +56,7 @@ module type Monad = sig
   include Applicative.Applicative with type 'a m := 'a m
 
   val ( >>= ) : 'a m -> ('a -> 'b m) -> 'b m
+  val ( let> ) : 'a m -> ('a -> 'b m) -> 'b m
   val ( >=> ) : ('a -> 'b m) -> ('b -> 'c m) -> 'a -> 'c m
   val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
   val join : 'a m m -> 'a m

@@ -39,6 +39,7 @@ module type Applicative = sig
   val map : ('a -> 'b) -> 'a m -> 'b m
   (** Alias for lift1. *)
 
+  val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
   val sequence : 'a m list -> 'a list m
   val map_a : ('a -> 'b m) -> 'a list -> 'b list m
   val ( <* ) : 'a m -> 'b m -> 'a m
