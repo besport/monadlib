@@ -19,7 +19,7 @@ type ('tag, 'a) node = Node of 'a * ('tag * ('tag, 'a) node) LazyList.t
 module type Tree = sig
   type tag
 
-  include Monad.BaseCollectionM
+  include Collection.BaseCollectionM
   include Applicative.Base with type 'a m := 'a m
 
   val count : 'a m -> int

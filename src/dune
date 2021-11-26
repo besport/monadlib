@@ -1,7 +1,18 @@
 (library
  (name monadlib)
  (public_name monadlib)
- (modules lazyList noblock tagTree monad applicative)
+ (modules
+  lazyList
+  noblock
+  tagTree
+  monad
+  applicative
+  collection
+  reader
+  writer
+  stream
+  state
+  retry)
  (libraries batteries threads))
 
 (env
