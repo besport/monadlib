@@ -21,6 +21,7 @@ module type Applicative = sig
     -> 'e m
 
   val ( <$> ) : ('a -> 'b) -> 'a m -> 'b m
+  val map : ('a -> 'b) -> 'a m -> 'b m
   val sequence : 'a m list -> 'a list m
   val map_a : ('a -> 'b m) -> 'a list -> 'b list m
   val ( <* ) : 'a m -> 'b m -> 'a m
@@ -31,6 +32,7 @@ module Make (A : Base) = struct
   include A
 
   let ( <$> ) f x = return f <*> x
+  let map = ( <$> )
   let lift1 f x = f <$> x
   let lift2 f x y = f <$> x <*> y
   let lift3 f x y z = f <$> x <*> y <*> z
