@@ -3,3 +3,8 @@
  (public_name monadlib)
  (modules lazyList noblock tagTree monad applicative)
  (libraries batteries threads))
+
+(env
+ (_
+  (flags
+   (:standard -w -9-37-39))))
