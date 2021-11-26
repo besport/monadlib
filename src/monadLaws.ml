@@ -15,16 +15,13 @@ end
 module BuildMonadTests (M : EquivMonad) = struct
   module B = Monad.Make (M)
 
-  let law1 x = M.equiv (B.lift1 (fun x -> x) x) x
-
-  let law2 f g x =
-    M.equiv (B.lift1 f (B.lift1 g x)) (B.lift1 (fun x -> f (g x)) x)
-
-  let law3 f x = M.equiv (B.lift1 f (B.return x)) (B.return (f x))
-  let law4 f x = M.equiv (B.lift1 f (B.join x)) (B.join (B.lift1 (B.lift1 f) x))
+  let law1 x = M.equiv (B.map (fun x -> x) x) x
+  let law2 f g x = M.equiv (B.map f (B.map g x)) (B.map (fun x -> f (g x)) x)
+  let law3 f x = M.equiv (B.map f (B.return x)) (B.return (f x))
+  let law4 f x = M.equiv (B.map f (B.join x)) (B.join (B.map (B.map f) x))
   let law5 x = M.equiv (B.join (B.return x)) x
-  let law6 x = M.equiv (B.join (B.lift1 B.return x)) x
-  let law7 x = M.equiv (B.join (B.join x)) (B.join (B.lift1 B.join x))
+  let law6 x = M.equiv (B.join (B.map B.return x)) x
+  let law7 x = M.equiv (B.join (B.join x)) (B.join (B.map B.join x))
 end
 
 module BuildPlusTests (M : EquivPlus) = struct

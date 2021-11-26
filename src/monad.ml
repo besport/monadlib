@@ -60,13 +60,13 @@ module Make (M : BatInterfaces.Monad) = struct
   let ( let> ) = bind
   let ( >=> ) g f x = g x >>= f
   let ( <=< ) f g x = g x >>= f
-  let lift1 f x = x >>= fun x -> return (f x)
-  let lift2 f x y = x >>= fun x -> lift1 (f x) y
+  let map f x = x >>= fun x -> return (f x)
+  let map2 f x y = x >>= fun x -> map (f x) y
 
   module Ap = Applicative.Make (struct
     include M
 
-    let ( <*> ) f x = lift2 (fun f x -> f x) f x
+    let ( <*> ) f x = map2 (fun f x -> f x) f x
   end)
 
   include (Ap : Applicative.Applicative with type 'a m := 'a m)
@@ -75,7 +75,7 @@ module Make (M : BatInterfaces.Monad) = struct
 
   let filter_m p =
     let rec loop m = function
-      | [] -> lift1 List.rev m
+      | [] -> map List.rev m
       | x :: xs ->
           loop
             ( p x >>= fun b ->
@@ -101,8 +101,8 @@ module MakePlus (M : BasePlus) = struct
   let guard b = if b then return () else zero ()
 
   let rec transpose xs =
-    let hds = sum (lift1 (BatList.take 1) xs) in
-    if null hds then [] else hds :: transpose (lift1 (BatList.drop 1) xs)
+    let hds = sum (map (BatList.take 1) xs) in
+    if null hds then [] else hds :: transpose (map (BatList.drop 1) xs)
 end
 
 module MakeLazyPlus (M : BaseLazyPlus) = struct
@@ -123,10 +123,10 @@ module MakeLazyPlus (M : BaseLazyPlus) = struct
 
   let rec ltranspose xs =
     lazy
-      (let hds = lsum (lift1 (Ll.take 1) xs) in
+      (let hds = lsum (map (Ll.take 1) xs) in
        if null hds
        then Ll.Nil
-       else Ll.Cons (hds, ltranspose (lift1 (Ll.drop 1) xs)))
+       else Ll.Cons (hds, ltranspose (map (Ll.drop 1) xs)))
 end
 
 module MakeStream (M : sig
@@ -178,7 +178,7 @@ struct
         in
         shift xs
       in
-      join (Ll.map (ML.lift1 f) xs)
+      join (Ll.map (ML.map f) xs)
 
     let ( <*> ) fs xs =
       let rec shift fs =
@@ -280,7 +280,7 @@ module LazyT (M : BatInterfaces.Monad) = struct
     let bind x f = M.bind x (fun x -> f (Lazy.force x))
   end)
 
-  let lift x = M.lift1 (fun x -> lazy x) x
+  let lift x = M.map (fun x -> lazy x) x
 end
 
 module List = MakePlus (struct
@@ -300,10 +300,10 @@ module ListT (M : BatInterfaces.Monad) = struct
     type 'a m = 'a list M.m
 
     let return x = M.return [x]
-    let bind xs f = M.bind xs (fun x -> M.lift1 BatList.concat (M.map_a f x))
+    let bind xs f = M.bind xs (fun x -> M.map BatList.concat (M.map_a f x))
   end)
 
-  let lift x = M.lift1 (fun x -> [x]) x
+  let lift x = M.map (fun x -> [x]) x
 end
 
 module LazyListM = struct
@@ -347,7 +347,7 @@ module OptionT (M : BatInterfaces.Monad) = struct
     let bind xs f = M.bind xs (function None -> M.return None | Some x -> f x)
   end)
 
-  let lift x = M.lift1 (fun x -> Some x) x
+  let lift x = M.map (fun x -> Some x) x
 end
 
 module Error (E : sig
@@ -400,7 +400,7 @@ struct
     let null _ = false
   end)
 
-  let lift x = M.lift1 (fun x -> Result x) x
+  let lift x = M.map (fun x -> Result x) x
   let throw e = M.return (Error e)
 
   let catch x handler =
@@ -501,8 +501,8 @@ struct
   let write x _ = M.return (x, ())
   let modify f = bind read (fun s -> write (f s))
   let run x s = x s
-  let eval x s = M.lift1 snd (x s)
-  let lift x s = M.lift1 (fun x -> s, x) x
+  let eval x s = M.map snd (x s)
+  let lift x s = M.map (fun x -> s, x) x
 end
 
 module type Monoid = sig
@@ -557,20 +557,20 @@ module WriterT (Mon : Monoid) (M : BatInterfaces.Monad) = struct
     let bind x f =
       M.bind x (fun x ->
           let v, x = W.run x in
-          M.lift1 (WM.lift2 (fun () y -> y) (W.write v)) (f x))
+          M.map (WM.map2 (fun () y -> y) (W.write v)) (f x))
   end)
 
-  let listen x = M.lift1 W.listen x
+  let listen x = M.map W.listen x
   let write x = M.return (W.write x)
 
   let run xs =
-    M.lift1
+    M.map
       (fun x ->
         let v, x = W.run x in
         v, x)
       xs
 
-  let lift x = M.lift1 W.return x
+  let lift x = M.map W.return x
 end
 
 module CollectionOpt (C : BaseCollectionM) = struct

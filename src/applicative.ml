@@ -8,11 +8,11 @@ end
 module type Applicative = sig
   include Base
 
-  val lift1 : ('a -> 'b) -> 'a m -> 'b m
-  val lift2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
-  val lift3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
+  val map : ('a -> 'b) -> 'a m -> 'b m
+  val map2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
+  val map3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
 
-  val lift4
+  val map4
     :  ('a -> 'b -> 'c -> 'd -> 'e)
     -> 'a m
     -> 'b m
@@ -21,7 +21,6 @@ module type Applicative = sig
     -> 'e m
 
   val ( <$> ) : ('a -> 'b) -> 'a m -> 'b m
-  val map : ('a -> 'b) -> 'a m -> 'b m
   val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
   val sequence : 'a m list -> 'a list m
   val map_a : ('a -> 'b m) -> 'a list -> 'b list m
@@ -38,19 +37,18 @@ module Make (A : Base) = struct
   let ( <$> ) f x = return f <*> x
   let map = ( <$> )
   let ( let$ ) x f = f <$> x
-  let lift1 f x = f <$> x
-  let lift2 f x y = f <$> x <*> y
-  let lift3 f x y z = f <$> x <*> y <*> z
-  let lift4 f x y z w = f <$> x <*> y <*> z <*> w
-  let ( <* ) x y = lift2 (fun x _ -> x) x y
-  let ( >* ) x y = lift2 (fun _ y -> y) x y
+  let map2 f x y = f <$> x <*> y
+  let map3 f x y z = f <$> x <*> y <*> z
+  let map4 f x y z w = f <$> x <*> y <*> z <*> w
+  let ( <* ) x y = map2 (fun x _ -> x) x y
+  let ( >* ) x y = map2 (fun _ y -> y) x y
 
   let rec sequence = function
     | [] -> return []
-    | m :: ms -> lift2 (fun x xs -> x :: xs) m (sequence ms)
+    | m :: ms -> map2 (fun x xs -> x :: xs) m (sequence ms)
 
   let map_a f xs = sequence (List.map f xs)
-  let ignore m = lift1 (fun _ -> ()) m
+  let ignore m = map (fun _ -> ()) m
   let onlyif b m = if b then m else return ()
   let unless b m = if b then return () else m
 end
@@ -61,5 +59,5 @@ module Transform (A : Base) (Inner : Base) = struct
   type 'a m = 'a Inner.m A.m
 
   let return x = A.return (Inner.return x)
-  let ( <*> ) f x = A.lift2 Inner.( <*> ) f x
+  let ( <*> ) f x = A.map2 Inner.( <*> ) f x
 end

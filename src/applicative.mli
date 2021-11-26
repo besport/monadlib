@@ -21,11 +21,11 @@ end
 module type Applicative = sig
   include Base
 
-  val lift1 : ('a -> 'b) -> 'a m -> 'b m
-  val lift2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
-  val lift3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
+  val map : ('a -> 'b) -> 'a m -> 'b m
+  val map2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
+  val map3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
 
-  val lift4
+  val map4
     :  ('a -> 'b -> 'c -> 'd -> 'e)
     -> 'a m
     -> 'b m
@@ -34,12 +34,11 @@ module type Applicative = sig
     -> 'e m
 
   val ( <$> ) : ('a -> 'b) -> 'a m -> 'b m
-  (** Alias for lift1. *)
-
-  val map : ('a -> 'b) -> 'a m -> 'b m
-  (** Alias for lift1. *)
+  (** Alias for map *)
 
   val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
+  (** Binding operator for map *)
+
   val sequence : 'a m list -> 'a list m
   val map_a : ('a -> 'b m) -> 'a list -> 'b list m
   val ( <* ) : 'a m -> 'b m -> 'a m

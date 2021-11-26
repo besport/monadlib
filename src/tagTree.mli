@@ -3,7 +3,7 @@
 
     We provide a separate applicative interface which is less strict
     than the derived definition for the monad. When we evaluate
-    [lift2 f t1 t2], the function f will be applied across all possible
+    [map2 f t1 t2], the function f will be applied across all possible
     arguments from [t1] and [t2], after which, results will be discarded by
     simplification.
 
