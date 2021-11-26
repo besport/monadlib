@@ -14,25 +14,28 @@
     @author Phil Scott
 *)
 
-type ('tag,'a) node =
-    Node of 'a * ('tag * ('tag,'a) node) LazyList.t
+type ('tag, 'a) node = Node of 'a * ('tag * ('tag, 'a) node) LazyList.t
 
-module type Tree =
-sig
+module type Tree = sig
   type tag
+
   include Monad.BaseCollectionM
   include Applicative.Base with type 'a m := 'a m
-  val count      : 'a m -> int
-  val to_list    : 'a m -> 'a LazyList.t
-  val collapse   : 'a m -> 'a m
-  val with_tags  : 'a m -> (tag list * 'a) m
-  val branch     : tag LazyList.t -> tag m
-  val print      : ('a -> unit) -> 'a m -> unit
-  val to_forced  : 'a m -> 'a m
+
+  val count : 'a m -> int
+  val to_list : 'a m -> 'a LazyList.t
+  val collapse : 'a m -> 'a m
+  val with_tags : 'a m -> (tag list * 'a) m
+  val branch : tag LazyList.t -> tag m
+  val print : ('a -> unit) -> 'a m -> unit
+  val to_forced : 'a m -> 'a m
 end
 
-module Make : functor(Tag:sig
-  type t
-  val print : t -> unit
-  val cmp   : t -> t -> bool
-end) -> Tree with type tag = Tag.t and type 'a m = (Tag.t, 'a LazyList.t) node
+module Make : functor
+  (Tag : sig
+     type t
+
+     val print : t -> unit
+     val cmp : t -> t -> bool
+   end)
+  -> Tree with type tag = Tag.t and type 'a m = (Tag.t, 'a LazyList.t) node
