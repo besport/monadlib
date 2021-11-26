@@ -126,6 +126,13 @@ module MakeLazyPlus (M : BaseLazyPlus) = struct
        else Ll.Cons (hds, ltranspose (map (Ll.drop 1) xs)))
 end
 
+module Identity : Monad with type 'a m = 'a = Make (struct
+  type 'a m = 'a
+
+  let return x = x
+  let bind x f = f x
+end)
+
 module LazyM = Make (struct
   type 'a m = 'a Lazy.t
 

@@ -102,6 +102,8 @@ module MakeLazyPlus (M : BaseLazyPlus) : LazyPlus with type 'a m = 'a M.m
 
 (** {6 Specific monads} *)
 
+module Identity : Monad with type 'a m = 'a
+
 module LazyM : Monad with type 'a m = 'a Lazy.t
 (** The lazy monad. Automatically wraps calls lazily and forces as needed. *)
 
