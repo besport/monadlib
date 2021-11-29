@@ -38,16 +38,16 @@ open Monad
     code. So for efficiency, our streams can be truncated, which represents a
     process that terminates.
 
-    Note that it is impossible to define a general {! BaseLazyPlus.null} predicate
+    Note that it is impossible to define a general {! T.null} predicate
     for streams, because we would have to be able to decide whether an infinite
     stream of values consists entirely of the empty generation. Turing says that's
     impossible, and I believe him. As a crude approximation, then, we have it that {!
-    BaseLazyPlus.null} returns [true] just for the special case that its input is an
+    T.null} returns [true] just for the special case that its input is an
     empty lazy list. *)
 module type Stream = sig
   type 'a t
 
-  include LazyPlus with type 'a m = 'a t Lazy.t
+  include LazyPlus.S with type 'a m = 'a t Lazy.t
 
   val iterate : ('a m -> 'a m) -> 'a m -> 'a m
   (** The sum of the stream [\[f x, f (f x), f (f (f x)),...\]] *)
@@ -77,7 +77,7 @@ end
     be commutative, but don't take my word for it!
  *)
 module MakeStream (M : sig
-  include BaseLazyPlus
+  include LazyPlus.T
   include Applicative.T with type 'a m := 'a m
 end) : sig
   include

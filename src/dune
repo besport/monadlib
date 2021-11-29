@@ -13,7 +13,8 @@
   stream
   state
   retry
-  continuation)
+  continuation
+  lazyPlus)
  (libraries batteries))
 
 (env

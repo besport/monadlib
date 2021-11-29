@@ -1,7 +1,7 @@
 open Monad
 
 module type T = sig
-  include BaseLazyPlus
+  include LazyPlus.T
 
   val difference : ('a -> 'a -> bool) -> 'a m -> 'a m -> 'a m
   val unique : ?cmp:('a -> 'a -> bool) -> 'a m -> 'a m

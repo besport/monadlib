@@ -3,7 +3,7 @@ open Monad
 (** Monads for collections. Stream is the current use-case for this, since it
     is parameterised on a collection monad (like [list]). *)
 module type T = sig
-  include BaseLazyPlus
+  include LazyPlus.T
 
   val difference : ('a -> 'a -> bool) -> 'a m -> 'a m -> 'a m
   (** [difference p xs ys] removes all elements from [xs] which are less than or

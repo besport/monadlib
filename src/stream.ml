@@ -1,4 +1,3 @@
-open Monad
 module Ll = LazyList
 
 let ( ^:^ ) = Ll.( ^:^ )
@@ -7,7 +6,7 @@ let ( ^@^ ) = Ll.( ^@^ )
 module type Stream = sig
   type 'a t
 
-  include LazyPlus with type 'a m = 'a t Lazy.t
+  include LazyPlus.S with type 'a m = 'a t Lazy.t
 
   val iterate : ('a m -> 'a m) -> 'a m -> 'a m
   val delay : 'a m -> 'a m
@@ -20,11 +19,11 @@ module type StreamC = sig
 end
 
 module MakeStream (M : sig
-  include BaseLazyPlus
+  include LazyPlus.T
   include Applicative.T with type 'a m := 'a m
 end) =
 struct
-  module ML = MakeLazyPlus (M)
+  module ML = LazyPlus.Make (M)
 
   type 'a t = 'a ML.m LazyList.node_t
 
@@ -86,10 +85,8 @@ struct
       shift fs
   end
 
-  include MakeLazyPlus (Base)
-
-  include (
-    Applicative.Make (Base) : Applicative.S with type 'a m := 'a m)
+  include LazyPlus.Make (Base)
+  include (Applicative.Make (Base) : Applicative.S with type 'a m := 'a m)
 
   let to_depth n = LazyList.take n
   let rec iterate f xs = plus xs (delay (lazy (Ll.next (iterate f (f xs)))))
@@ -101,7 +98,7 @@ module MakeStreamC (M : sig
 end) =
 struct
   include MakeStream (M)
-  module Mm = MakeLazyPlus (M)
+  module Mm = LazyPlus.Make (M)
 
   let nub p xs =
     let nub maxs x =

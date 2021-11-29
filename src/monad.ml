@@ -1,18 +1,8 @@
-module Ll = LazyList
-
 module type BasePlus = sig
   include BatInterfaces.Monad
 
   val zero : unit -> 'a m
   val plus : 'a m -> 'a m -> 'a m
-  val null : 'a m -> bool
-end
-
-module type BaseLazyPlus = sig
-  include BatInterfaces.Monad
-
-  val zero : unit -> 'a m
-  val lplus : 'a m -> 'a m Lazy.t -> 'a m
   val null : 'a m -> bool
 end
 
@@ -38,16 +28,6 @@ module type MonadPlus = sig
   val msum : 'a m list -> 'a m
   val guard : bool -> unit m
   val transpose : 'a list m -> 'a m list
-end
-
-module type LazyPlus = sig
-  include BaseLazyPlus
-  include MonadPlus with type 'a m := 'a m
-
-  val of_llist : 'a LazyList.t -> 'a m
-  val lsum : 'a LazyList.t m -> 'a m
-  val lmsum : 'a m LazyList.t -> 'a m
-  val ltranspose : 'a LazyList.t m -> 'a m LazyList.t
 end
 
 module Make (M : BatInterfaces.Monad) = struct
@@ -102,30 +82,6 @@ module MakePlus (M : BasePlus) = struct
     if null hds then [] else hds :: transpose (map (BatList.drop 1) xs)
 end
 
-module MakeLazyPlus (M : BaseLazyPlus) = struct
-  include MakePlus (struct
-    include M
-
-    let plus x y = M.lplus x (lazy y)
-  end)
-
-  let lplus = M.lplus
-
-  let lsum xs =
-    xs >>= fun xs -> Ll.fold_right lplus (zero ()) (Ll.map return xs)
-
-  let of_llist xs = Ll.fold_right lplus (zero ()) (Ll.map return xs)
-  let lmsum xs = Ll.fold_right lplus (zero ()) xs
-  let filter p xs = xs >>= fun x -> if p x then return x else zero ()
-
-  let rec ltranspose xs =
-    lazy
-      (let hds = lsum (map (Ll.take 1) xs) in
-       if null hds
-       then Ll.Nil
-       else Ll.Cons (hds, ltranspose (map (Ll.drop 1) xs)))
-end
-
 module Identity : Monad with type 'a m = 'a = Make (struct
   type 'a m = 'a
 
@@ -174,24 +130,6 @@ module ListT (M : BatInterfaces.Monad) = struct
   end)
 
   let lift x = M.map (fun x -> [x]) x
-end
-
-module LazyListM = struct
-  include MakeLazyPlus (struct
-    type 'a m = 'a LazyList.t
-
-    let return x = Ll.singleton x
-    let bind xs f = Ll.concat (Ll.map f xs)
-    let zero () = Ll.nil
-
-    let rec lplus xs ys =
-      lazy
-        (match Ll.next xs with
-        | Ll.Nil -> Ll.next (Lazy.force ys)
-        | Ll.Cons (x, xs) -> Ll.Cons (x, lplus xs ys))
-
-    let null = Ll.is_empty
-  end)
 end
 
 module Option = MakePlus (struct
