@@ -20,7 +20,7 @@ module type Tree = sig
   type tag
 
   include Collection.BaseCollectionM
-  include Applicative.Base with type 'a m := 'a m
+  include Applicative.T with type 'a m := 'a m
 
   val count : 'a m -> int
   val to_list : 'a m -> 'a LazyList.t

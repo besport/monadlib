@@ -1,6 +1,6 @@
 open Monad
 
-module State (T : sig
+module Make (T : sig
   type s
 end) =
 struct
@@ -21,14 +21,14 @@ struct
   let modify f = bind read (fun s -> write (f s))
 end
 
-module StateT (T : sig
+module Trans (T : sig
   type s
 end)
 (M : BatInterfaces.Monad) =
 struct
-  module M = Make (M)
+  module M = Monad.Make (M)
 
-  include Make (struct
+  include Monad.Make (struct
     type 'a m = T.s -> (T.s * 'a) M.m
 
     let return x s = M.return (s, x)
@@ -50,7 +50,7 @@ module CollectionState (T : sig
 end)
 (C : Collection.BaseCollectionM) =
 struct
-  include StateT (T) (C)
+  include Trans (T) (C)
 
   let zero () _ = C.zero ()
   let lplus xs ys s = C.lplus (xs s) (lazy (Lazy.force ys s))

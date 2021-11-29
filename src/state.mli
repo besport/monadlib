@@ -1,6 +1,6 @@
 open Monad
 
-module State (T : sig
+module Make (T : sig
   type s
 end) : sig
   include Monad
@@ -12,7 +12,7 @@ end) : sig
   val eval : 'a m -> T.s -> 'a
 end
 
-module StateT (T : sig
+module Trans (T : sig
   type s
 end)
 (M : BatInterfaces.Monad) : sig

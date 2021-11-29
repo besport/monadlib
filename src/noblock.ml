@@ -46,7 +46,7 @@ include Monad.Make (struct
   let bind = ( >>= )
 end)
 
-include (App : Applicative.Applicative with type 'a m := 'a m)
+include (App : Applicative.S with type 'a m := 'a m)
 
 let read_line fd =
   let rec read = function

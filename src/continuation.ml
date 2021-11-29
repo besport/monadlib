@@ -1,6 +1,6 @@
 open Monad
 
-module Continuation (T : sig
+module Make (T : sig
   type r
 end) =
 struct

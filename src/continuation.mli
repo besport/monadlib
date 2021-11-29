@@ -24,7 +24,7 @@ open Monad
     monad corresponds to embedding classical logic intuitionistically. Allowing
     callCC corresponds to assuming a classical hypothesis.
  *)
-module Continuation (T : sig
+module Make (T : sig
   type r
 end) : sig
   include Monad with type 'a m = ('a -> T.r) -> T.r

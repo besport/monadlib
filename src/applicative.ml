@@ -1,12 +1,12 @@
-module type Base = sig
+module type T = sig
   type 'a m
 
   val return : 'a -> 'a m
   val ( <*> ) : ('a -> 'b) m -> 'a m -> 'b m
 end
 
-module type Applicative = sig
-  include Base
+module type S = sig
+  include T
 
   val map : ('a -> 'b) -> 'a m -> 'b m
   val map2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
@@ -31,7 +31,7 @@ module type Applicative = sig
   val unless : bool -> unit m -> unit m
 end
 
-module Make (A : Base) = struct
+module Make (A : T) = struct
   include A
 
   let ( <$> ) f x = return f <*> x
@@ -53,7 +53,7 @@ module Make (A : Base) = struct
   let unless b m = if b then return () else m
 end
 
-module Transform (A : Base) (Inner : Base) = struct
+module Transform (A : T) (Inner : T) = struct
   module A = Make (A)
 
   type 'a m = 'a Inner.m A.m

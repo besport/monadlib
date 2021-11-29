@@ -9,7 +9,7 @@
 
 (** {1 Base Modules} *)
 
-module type Base = sig
+module type T = sig
   type 'a m
 
   val return : 'a -> 'a m
@@ -18,8 +18,8 @@ end
 
 (** {1 Library Types } *)
 
-module type Applicative = sig
-  include Base
+module type S = sig
+  include T
 
   val map : ('a -> 'b) -> 'a m -> 'b m
   val map2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
@@ -50,9 +50,8 @@ end
 
 (** {1 Library Creation} *)
 
-module Make (A : Base) : Applicative with type 'a m = 'a A.m
+module Make (T : T) : S with type 'a m = 'a T.m
 
 (** {1 Transformer } *)
 
-module Transform (A : Base) (Inner : Base) :
-  Base with type 'a m = 'a Inner.m A.m
+module Transform (T : T) (Inner : T) : T with type 'a m = 'a Inner.m T.m

@@ -53,7 +53,7 @@ end
 (** Your basic library functions for monads. *)
 module type Monad = sig
   include BatInterfaces.Monad
-  include Applicative.Applicative with type 'a m := 'a m
+  include Applicative.S with type 'a m := 'a m
 
   val ( >>= ) : 'a m -> ('a -> 'b m) -> 'b m
   val ( let> ) : 'a m -> ('a -> 'b m) -> 'b m

@@ -78,7 +78,7 @@ end
  *)
 module MakeStream (M : sig
   include BaseLazyPlus
-  include Applicative.Base with type 'a m := 'a m
+  include Applicative.T with type 'a m := 'a m
 end) : sig
   include
     Stream
@@ -98,7 +98,7 @@ end
     constraint by performing, say, a sort on each generation.  *)
 module MakeStreamC (M : sig
   include Collection.BaseCollectionM
-  include Applicative.Base with type 'a m := 'a m
+  include Applicative.T with type 'a m := 'a m
 end) : sig
   include
     StreamC

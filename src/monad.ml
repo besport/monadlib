@@ -18,7 +18,7 @@ end
 
 module type Monad = sig
   include BatInterfaces.Monad
-  include Applicative.Applicative with type 'a m := 'a m
+  include Applicative.S with type 'a m := 'a m
 
   val ( >>= ) : 'a m -> ('a -> 'b m) -> 'b m
   val ( let> ) : 'a m -> ('a -> 'b m) -> 'b m
@@ -66,7 +66,7 @@ module Make (M : BatInterfaces.Monad) = struct
     let ( <*> ) f x = map2 (fun f x -> f x) f x
   end)
 
-  include (Ap : Applicative.Applicative with type 'a m := 'a m)
+  include (Ap : Applicative.S with type 'a m := 'a m)
 
   let join m = m >>= fun x -> x
 
