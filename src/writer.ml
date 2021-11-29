@@ -51,7 +51,7 @@ module CollectionWriter (Mon : sig
 
   val cmp : t -> t -> bool
 end)
-(C : Collection.BaseCollectionM) =
+(C : Collection.T) =
 struct
   include WriterT (Mon) (C)
 

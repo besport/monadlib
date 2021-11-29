@@ -1,6 +1,6 @@
 open Monad
 
-module type BaseCollectionM = sig
+module type T = sig
   include BaseLazyPlus
 
   val difference : ('a -> 'a -> bool) -> 'a m -> 'a m -> 'a m
@@ -9,7 +9,7 @@ module type BaseCollectionM = sig
   val nub : ('a -> 'a -> bool) -> 'a m -> 'a m
 end
 
-module CollectionOpt (C : BaseCollectionM) = struct
+module CollectionOpt (C : T) = struct
   module Option = Make (Option)
 
   let liftp2 p x y =

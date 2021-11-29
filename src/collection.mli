@@ -2,7 +2,7 @@ open Monad
 
 (** Monads for collections. Stream is the current use-case for this, since it
     is parameterised on a collection monad (like [list]). *)
-module type BaseCollectionM = sig
+module type T = sig
   include BaseLazyPlus
 
   val difference : ('a -> 'a -> bool) -> 'a m -> 'a m -> 'a m
@@ -36,8 +36,8 @@ end
     [BaseCollectionM.difference] are implemented. We also provide the [list]
     function for transformers. *)
 
-module CollectionOpt (C : BaseCollectionM) : sig
-  include BaseCollectionM with type 'a m = 'a option C.m
+module CollectionOpt (C : T) : sig
+  include T with type 'a m = 'a option C.m
   include Monad with type 'a m := 'a m
 
   val cmp_on : ('a -> 'a -> bool) -> 'a option -> 'a option -> bool

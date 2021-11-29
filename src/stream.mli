@@ -65,7 +65,7 @@ end
 (** The union of streams and collections. *)
 module type StreamC = sig
   include Stream
-  include Collection.BaseCollectionM with type 'a m := 'a m
+  include Collection.T with type 'a m := 'a m
 end
 
 (** Create a stream monad from an arbitrary inner monad, which computes the
@@ -89,7 +89,7 @@ end) : sig
 end
 
 (** Here, we create a stream monad from a definite collection monad
-    {! Collection.BaseCollectionM}. The inner monad will be used to represent the
+    {! Collection.T}. The inner monad will be used to represent the
     generations in the stream. The order of elements in each generation should
     not matter, so you might want to use a set or a bag. If you want to live
     life on the edge, just remember that your code should not depend on the
@@ -97,7 +97,7 @@ end
     order that generations appear in the stream). You can enforce this
     constraint by performing, say, a sort on each generation.  *)
 module MakeStreamC (M : sig
-  include Collection.BaseCollectionM
+  include Collection.T
   include Applicative.T with type 'a m := 'a m
 end) : sig
   include

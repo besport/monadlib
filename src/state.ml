@@ -48,7 +48,7 @@ module CollectionState (T : sig
 
   val cmp : s -> s -> bool
 end)
-(C : Collection.BaseCollectionM) =
+(C : Collection.T) =
 struct
   include Trans (T) (C)
 

@@ -31,8 +31,8 @@ module CollectionState (T : sig
 
   val cmp : s -> s -> bool
 end)
-(C : Collection.BaseCollectionM) : sig
-  include Collection.BaseCollectionM with type 'a m = T.s -> (T.s * 'a) C.m
+(C : Collection.T) : sig
+  include Collection.T with type 'a m = T.s -> (T.s * 'a) C.m
   include Monad with type 'a m := 'a m
 
   val read : T.s m

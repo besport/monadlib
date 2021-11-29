@@ -22,8 +22,8 @@ module CollectionWriter (Mon : sig
 
   val cmp : t -> t -> bool
 end)
-(C : Collection.BaseCollectionM) : sig
-  include Collection.BaseCollectionM with type 'a m = (Mon.t * 'a) C.m
+(C : Collection.T) : sig
+  include Collection.T with type 'a m = (Mon.t * 'a) C.m
   include Monad with type 'a m := 'a m
 
   val write : Mon.t -> unit m

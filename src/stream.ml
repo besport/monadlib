@@ -16,7 +16,7 @@ end
 
 module type StreamC = sig
   include Stream
-  include Collection.BaseCollectionM with type 'a m := 'a m
+  include Collection.T with type 'a m := 'a m
 end
 
 module MakeStream (M : sig
@@ -96,7 +96,7 @@ struct
 end
 
 module MakeStreamC (M : sig
-  include Collection.BaseCollectionM
+  include Collection.T
   include Applicative.T with type 'a m := 'a m
 end) =
 struct
