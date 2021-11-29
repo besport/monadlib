@@ -12,7 +12,8 @@
   writer
   stream
   state
-  retry)
+  retry
+  continuation)
  (libraries batteries threads))
 
 (env
