@@ -14,7 +14,7 @@
   state
   retry
   continuation)
- (libraries batteries threads))
+ (libraries batteries))
 
 (env
  (_
