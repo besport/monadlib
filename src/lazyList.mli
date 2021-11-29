@@ -2,13 +2,13 @@
     laziness.
     @author Phil Scott *)
 
-(** {6 Types} *)
+(** {1 Types} *)
 
 type 'a t = 'a node_t Lazy.t
 
 and 'a node_t = Nil | Cons of 'a * 'a t
 
-(** {6 Creation} *)
+(** {1 Creation} *)
 
 val nil : 'a t
 val singleton : 'a -> 'a t
@@ -32,11 +32,11 @@ val unfold : 'a -> ('a -> ('b * 'a) option) -> 'b t
 val ( ^:^ ) : 'a -> 'a t -> 'a t
 (** Binary cons operator. *)
 
-(** {6 Access} *)
+(** {1 Access} *)
 
 val hd : 'a t -> 'a
 
-(** {6 Predicates} *)
+(** {1 Predicates} *)
 
 val is_empty : 'a t -> bool
 val is_non_empty : 'a t -> bool
@@ -47,7 +47,7 @@ val any : ('a -> bool) -> 'a t -> bool
 val all : ('a -> bool) -> 'a t -> bool
 (** Tests whether every element of the list is satisfied by a predicate. *)
 
-(** {6 Transformations} *)
+(** {1 Transformations} *)
 
 val cons : 'a -> 'a t -> 'a t
 
@@ -128,7 +128,7 @@ val interleave : 'a t -> 'a t -> 'a t
 val apl : ('a -> 'b) t -> 'a t -> 'b t
 (** Non-deterministic application in lists. *)
 
-(** {6 Set operations} *)
+(** {1 Set operations} *)
 
 val subset : ?cmp:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 (** Tests whether every element in the first list is equivalent to the elements
@@ -163,7 +163,7 @@ val maxima : ('a -> 'a -> bool) -> 'a t -> 'a t
 val nub : ('a -> 'a -> bool) -> 'a t -> 'a t
 (** Haskell style nub. *)
 
-(** {6 Miscellaneous} *)
+(** {1 Miscellaneous} *)
 
 val tl : 'a t -> 'a t
 val length : 'a t -> int

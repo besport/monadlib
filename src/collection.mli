@@ -27,7 +27,7 @@ module type BaseCollectionM = sig
   [nub].*)
 end
 
-(** {6 Transformers on Collections } *)
+(** {1 Transformers on Collections } *)
 
 (** Sometimes, you might want to transform a collection monad, in such a way
     that functions such as {! BaseCollectionM.unique} behave in a sensible

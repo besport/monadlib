@@ -11,7 +11,7 @@
     @author Phil Scott
  *)
 
-(** {6 Base Modules}*)
+(** {1 Base Modules}*)
 
 module type Monoid = sig
   type t
@@ -48,7 +48,7 @@ module type BaseLazyPlus = sig
       answer whether a given x is zero, then null x should be false. *)
 end
 
-(** {6 Library Types } *)
+(** {1 Library Types } *)
 
 (** Your basic library functions for monads. *)
 module type Monad = sig
@@ -94,13 +94,13 @@ module type LazyPlus = sig
   value can happily be infinite. *)
 end
 
-(** {6 Library Creation} *)
+(** {1 Library Creation} *)
 
 module Make (M : BatInterfaces.Monad) : Monad with type 'a m = 'a M.m
 module MakePlus (M : BasePlus) : MonadPlus with type 'a m = 'a M.m
 module MakeLazyPlus (M : BaseLazyPlus) : LazyPlus with type 'a m = 'a M.m
 
-(** {6 Specific monads} *)
+(** {1 Specific monads} *)
 
 module Identity : Monad with type 'a m = 'a
 
@@ -157,7 +157,7 @@ end) : sig
   val run_error : 'a m -> 'a err
 end
 
-(** {6 Transformers} *)
+(** {1 Transformers} *)
 
 module LazyT (M : BatInterfaces.Monad) : sig
   include Monad with type 'a m = 'a Lazy.t M.m

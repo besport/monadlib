@@ -89,7 +89,7 @@ end) : sig
 end
 
 (** Here, we create a stream monad from a definite collection monad
-    {! Monad.BaseCollectionM}. The inner monad will be used to represent the
+    {! Collection.BaseCollectionM}. The inner monad will be used to represent the
     generations in the stream. The order of elements in each generation should
     not matter, so you might want to use a set or a bag. If you want to live
     life on the edge, just remember that your code should not depend on the

@@ -7,7 +7,7 @@
     @author Phil Scott
 *)
 
-(** {6 Base Modules} *)
+(** {1 Base Modules} *)
 
 module type Base = sig
   type 'a m
@@ -16,7 +16,7 @@ module type Base = sig
   val ( <*> ) : ('a -> 'b) m -> 'a m -> 'b m
 end
 
-(** {6 Library Types } *)
+(** {1 Library Types } *)
 
 module type Applicative = sig
   include Base
@@ -48,9 +48,11 @@ module type Applicative = sig
   val unless : bool -> unit m -> unit m
 end
 
-(** {6 Library Creation} *)
+(** {1 Library Creation} *)
+
 module Make (A : Base) : Applicative with type 'a m = 'a A.m
 
-(** {6 Transformer } *)
+(** {1 Transformer } *)
+
 module Transform (A : Base) (Inner : Base) :
   Base with type 'a m = 'a Inner.m A.m
