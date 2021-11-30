@@ -1,6 +1,6 @@
 open Monad
 
-module Reader (M : sig
+module Make (M : sig
   type t
 end) =
 struct

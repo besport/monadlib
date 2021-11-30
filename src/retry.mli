@@ -1,6 +1,6 @@
 open Monad
 
-module Retry (E : sig
+module Make (E : sig
   type e
   type arg
   type tag

@@ -44,7 +44,7 @@ open Monad
     impossible, and I believe him. As a crude approximation, then, we have it that {!
     T.null} returns [true] just for the special case that its input is an
     empty lazy list. *)
-module type Stream = sig
+module type S = sig
   type 'a t
 
   include LazyPlus.S with type 'a m = 'a t Lazy.t
@@ -64,7 +64,7 @@ end
 
 (** The union of streams and collections. *)
 module type StreamC = sig
-  include Stream
+  include S
   include Collection.T with type 'a m := 'a m
 end
 
@@ -76,14 +76,12 @@ end
     this abstractly by saying that the plus operation on the inner monad must
     be commutative, but don't take my word for it!
  *)
-module MakeStream (M : sig
+module Make (M : sig
   include LazyPlus.T
   include Applicative.T with type 'a m := 'a m
 end) : sig
   include
-    Stream
-      with type 'a t = 'a M.m LazyList.node_t
-       and type 'a m = 'a M.m LazyList.t
+    S with type 'a t = 'a M.m LazyList.node_t and type 'a m = 'a M.m LazyList.t
 
   include Monad with type 'a m := 'a m
 end

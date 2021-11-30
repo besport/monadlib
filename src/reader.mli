@@ -1,6 +1,6 @@
 open Monad
 
-module Reader (T : sig
+module Make (T : sig
   type t
 end) : sig
   include Monad

@@ -3,7 +3,7 @@ module Ll = LazyList
 let ( ^:^ ) = Ll.( ^:^ )
 let ( ^@^ ) = Ll.( ^@^ )
 
-module type Stream = sig
+module type S = sig
   type 'a t
 
   include LazyPlus.S with type 'a m = 'a t Lazy.t
@@ -14,11 +14,11 @@ module type Stream = sig
 end
 
 module type StreamC = sig
-  include Stream
+  include S
   include Collection.T with type 'a m := 'a m
 end
 
-module MakeStream (M : sig
+module Make (M : sig
   include LazyPlus.T
   include Applicative.T with type 'a m := 'a m
 end) =
@@ -97,7 +97,7 @@ module MakeStreamC (M : sig
   include Applicative.T with type 'a m := 'a m
 end) =
 struct
-  include MakeStream (M)
+  include Make (M)
   module Mm = LazyPlus.Make (M)
 
   let nub p xs =
