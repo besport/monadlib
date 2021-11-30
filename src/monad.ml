@@ -98,9 +98,7 @@ module LazyM = Make (struct
   let bind x f = lazy (Lazy.force (f (Lazy.force x)))
 end)
 
-module LazyT (M : BatInterfaces.Monad) = struct
-  module M = Make (M)
-
+module LazyT (M : Monad) = struct
   include Make (struct
     type 'a m = 'a Lazy.t M.m
 

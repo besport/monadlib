@@ -10,9 +10,7 @@ module M = MakePlus (struct
   let null = function [] -> true | _ -> false
 end)
 
-module Trans (M : BatInterfaces.Monad) = struct
-  module M = Make (M)
-
+module Trans (M : Monad) = struct
   include Make (struct
     type 'a m = 'a list M.m
 

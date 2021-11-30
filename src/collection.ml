@@ -14,7 +14,7 @@ module MakeOpt (C : T) = struct
     | Some _, None -> false
     | Some x, Some y -> p x y
 
-  include Option.Trans (C)
+  include Option.Trans (Monad.Make (C))
 
   let zero () = C.zero ()
   let lplus xs ys = C.lplus xs ys

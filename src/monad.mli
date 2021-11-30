@@ -78,7 +78,7 @@ module LazyM : Monad with type 'a m = 'a Lazy.t
 
 (** {1 Transformers} *)
 
-module LazyT (M : BatInterfaces.Monad) : sig
+module LazyT (M : Monad) : sig
   include Monad with type 'a m = 'a Lazy.t M.m
 
   val lift : 'a M.m -> 'a m

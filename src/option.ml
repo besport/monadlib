@@ -13,9 +13,7 @@ module M = MakePlus (struct
   let null = BatOption.is_none
 end)
 
-module Trans (M : BatInterfaces.Monad) = struct
-  module M = Make (M)
-
+module Trans (M : Monad) = struct
   include Make (struct
     type 'a m = 'a option M.m
 
