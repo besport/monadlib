@@ -1,7 +1,7 @@
 open Monad
 
-module Writer (M : Monoid) = struct
-  include Make (struct
+module Make (M : Monoid) = struct
+  include Monad.Make (struct
     type 'a m = M.t * 'a
 
     let return x = M.zero (), x
@@ -16,12 +16,12 @@ module Writer (M : Monoid) = struct
   let write x = x, ()
 end
 
-module WriterT (Mon : Monoid) (M : BatInterfaces.Monad) = struct
-  module M = Make (M)
-  module W = Writer (Mon)
+module Trans (Mon : Monoid) (M : BatInterfaces.Monad) = struct
+  module M = Monad.Make (M)
+  module W = Make (Mon)
 
-  include Make (struct
-    module WM = Make (W)
+  include Monad.Make (struct
+    module WM = Monad.Make (W)
 
     type 'a m = 'a W.m M.m
 
@@ -53,7 +53,7 @@ module CollectionWriter (Mon : sig
 end)
 (C : Collection.T) =
 struct
-  include WriterT (Mon) (C)
+  include Trans (Mon) (C)
 
   let zero () = C.zero ()
   let lplus xs ys = C.lplus xs ys

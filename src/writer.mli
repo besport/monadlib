@@ -1,6 +1,6 @@
 open Monad
 
-module Writer (M : Monoid) : sig
+module Make (M : Monoid) : sig
   include Monad
 
   val listen : 'a m -> (M.t * 'a) m
@@ -8,7 +8,7 @@ module Writer (M : Monoid) : sig
   val write : M.t -> unit m
 end
 
-module WriterT (Mon : Monoid) (M : BatInterfaces.Monad) : sig
+module Trans (Mon : Monoid) (M : BatInterfaces.Monad) : sig
   include Monad
 
   val listen : 'a m -> (Mon.t * 'a) m

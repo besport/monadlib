@@ -16,7 +16,7 @@
 
 type ('tag, 'a) node = Node of 'a * ('tag * ('tag, 'a) node) LazyList.t
 
-module type Tree = sig
+module type S = sig
   type tag
 
   include Collection.T
@@ -38,4 +38,4 @@ module Make : functor
      val print : t -> unit
      val cmp : t -> t -> bool
    end)
-  -> Tree with type tag = Tag.t and type 'a m = (Tag.t, 'a LazyList.t) node
+  -> S with type tag = Tag.t and type 'a m = (Tag.t, 'a LazyList.t) node

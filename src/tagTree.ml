@@ -1,6 +1,6 @@
 type ('tag, 'a) node = Node of 'a * ('tag * ('tag, 'a) node) LazyList.t
 
-module type Tree = sig
+module type S = sig
   type tag
 
   include Collection.T
