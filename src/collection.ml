@@ -10,7 +10,7 @@ module type T = sig
 end
 
 module MakeOpt (C : T) = struct
-  module Option = Make (Option)
+  module O = Make (Option.M)
 
   let liftp2 p x y =
     match x, y with
@@ -18,7 +18,7 @@ module MakeOpt (C : T) = struct
     | Some _, None -> false
     | Some x, Some y -> p x y
 
-  include OptionT (C)
+  include Option.Trans (C)
 
   let zero () = C.zero ()
   let lplus xs ys = C.lplus xs ys

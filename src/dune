@@ -8,6 +8,7 @@
   applicative
   collection
   list
+  option
   reader
   writer
   stream

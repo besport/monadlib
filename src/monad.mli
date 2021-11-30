@@ -76,8 +76,6 @@ module Identity : Monad with type 'a m = 'a
 module LazyM : Monad with type 'a m = 'a Lazy.t
 (** The lazy monad. Automatically wraps calls lazily and forces as needed. *)
 
-module Option : MonadPlus with type 'a m = 'a option
-
 module Result (E : sig
   type e
 
@@ -96,12 +94,6 @@ end
 
 module LazyT (M : BatInterfaces.Monad) : sig
   include Monad with type 'a m = 'a Lazy.t M.m
-
-  val lift : 'a M.m -> 'a m
-end
-
-module OptionT (M : BatInterfaces.Monad) : sig
-  include Monad with type 'a m = 'a option M.m
 
   val lift : 'a M.m -> 'a m
 end
