@@ -43,7 +43,7 @@ module Make (M : T) = struct
        else Ll.Cons (hds, ltranspose (map (Ll.drop 1) xs)))
 end
 
-module LazyListM = struct
+module LazyList = struct
   include Make (struct
     type 'a m = 'a Ll.t
 

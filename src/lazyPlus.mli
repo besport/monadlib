@@ -31,4 +31,4 @@ module type S = sig
 end
 
 module Make (M : T) : S with type 'a m = 'a M.m
-module LazyListM : S with type 'a m = 'a LazyList.t
+module LazyList : S with type 'a m = 'a LazyList.t

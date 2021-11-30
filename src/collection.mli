@@ -36,7 +36,7 @@ end
     [BaseCollectionM.difference] are implemented. We also provide the [list]
     function for transformers. *)
 
-module CollectionOpt (C : T) : sig
+module MakeOpt (C : T) : sig
   include T with type 'a m = 'a option C.m
   include Monad with type 'a m := 'a m
 

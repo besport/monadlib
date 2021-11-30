@@ -9,7 +9,7 @@ module type T = sig
   val nub : ('a -> 'a -> bool) -> 'a m -> 'a m
 end
 
-module CollectionOpt (C : T) = struct
+module MakeOpt (C : T) = struct
   module Option = Make (Option)
 
   let liftp2 p x y =
