@@ -15,7 +15,7 @@ end
 module Trans (T : sig
   type s
 end)
-(M : BatInterfaces.Monad) : sig
+(M : Monad.Monad) : sig
   include Monad
 
   val read : T.s m

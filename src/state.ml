@@ -24,10 +24,8 @@ end
 module Trans (T : sig
   type s
 end)
-(M : BatInterfaces.Monad) =
+(M : Monad.Monad) =
 struct
-  module M = Monad.Make (M)
-
   include Monad.Make (struct
     type 'a m = T.s -> (T.s * 'a) M.m
 
@@ -50,7 +48,7 @@ module CollectionState (T : sig
 end)
 (C : Collection.T) =
 struct
-  include Trans (T) (C)
+  include Trans (T) (Monad.Make (C))
 
   let zero () _ = C.zero ()
   let lplus xs ys s = C.lplus (xs s) (lazy (Lazy.force ys s))

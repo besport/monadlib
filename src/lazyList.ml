@@ -14,6 +14,7 @@
 
 include BatLazyList
 module Bl = BatList
+module List = BatList
 
 let of_delay xs = Lazy.from_fun (fun () -> next (xs ()))
 let next l = Lazy.force l

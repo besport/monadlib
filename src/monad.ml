@@ -30,6 +30,8 @@ module type MonadPlus = sig
   val transpose : 'a list m -> 'a m list
 end
 
+module List = BatList
+
 module Make (M : BatInterfaces.Monad) = struct
   include M
 
@@ -107,29 +109,6 @@ module LazyT (M : BatInterfaces.Monad) = struct
   end)
 
   let lift x = M.map (fun x -> lazy x) x
-end
-
-module List = MakePlus (struct
-  type 'a m = 'a list
-
-  let return x = [x]
-  let bind xs f = BatList.concat (List.map f xs)
-  let zero () = []
-  let plus xs ys = xs @ ys
-  let null = function [] -> true | _ -> false
-end)
-
-module ListT (M : BatInterfaces.Monad) = struct
-  module M = Make (M)
-
-  include Make (struct
-    type 'a m = 'a list M.m
-
-    let return x = M.return [x]
-    let bind xs f = M.bind xs (fun x -> M.map BatList.concat (M.map_a f x))
-  end)
-
-  let lift x = M.map (fun x -> [x]) x
 end
 
 module Option = MakePlus (struct

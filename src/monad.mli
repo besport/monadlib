@@ -76,7 +76,6 @@ module Identity : Monad with type 'a m = 'a
 module LazyM : Monad with type 'a m = 'a Lazy.t
 (** The lazy monad. Automatically wraps calls lazily and forces as needed. *)
 
-module List : MonadPlus with type 'a m = 'a list
 module Option : MonadPlus with type 'a m = 'a option
 
 module Result (E : sig
@@ -97,17 +96,6 @@ end
 
 module LazyT (M : BatInterfaces.Monad) : sig
   include Monad with type 'a m = 'a Lazy.t M.m
-
-  val lift : 'a M.m -> 'a m
-end
-
-(** The list monad transformer will add non-determinism to computations. I
-    have not provided a transformer for lazy lists, since I'm not yet sure how
-    to implement it. It would probably need a lazy version of map_m, but it's
-    not clear to me how to write this, since whether the computations are
-    strict will determine whether the argument has to be completely forced. *)
-module ListT (M : BatInterfaces.Monad) : sig
-  include Monad with type 'a m = 'a list M.m
 
   val lift : 'a M.m -> 'a m
 end

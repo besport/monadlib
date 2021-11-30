@@ -47,7 +47,7 @@ module Make (A : T) = struct
     | [] -> return []
     | m :: ms -> map2 (fun x xs -> x :: xs) m (sequence ms)
 
-  let map_a f xs = sequence (List.map f xs)
+  let map_a f xs = sequence (BatList.map f xs)
   let ignore m = map (fun _ -> ()) m
   let onlyif b m = if b then m else return ()
   let unless b m = if b then return () else m
