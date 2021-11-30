@@ -76,40 +76,10 @@ module Identity : Monad with type 'a m = 'a
 module LazyM : Monad with type 'a m = 'a Lazy.t
 (** The lazy monad. Automatically wraps calls lazily and forces as needed. *)
 
-module Result (E : sig
-  type e
-
-  val defaultError : e
-end) : sig
-  type 'a err = ('a, E.e) result
-
-  include MonadPlus
-
-  val throw : E.e -> 'a m
-  val catch : 'a m -> (E.e -> 'a m) -> 'a m
-  val run_error : 'a m -> 'a err
-end
-
 (** {1 Transformers} *)
 
 module LazyT (M : BatInterfaces.Monad) : sig
   include Monad with type 'a m = 'a Lazy.t M.m
 
   val lift : 'a M.m -> 'a m
-end
-
-module ResultT (E : sig
-  type e
-
-  val defaultError : e
-end)
-(M : BatInterfaces.Monad) : sig
-  type 'a err = ('a, E.e) result
-
-  include Monad
-
-  val throw : E.e -> 'a m
-  val catch : 'a m -> (E.e -> 'a m) -> 'a m
-  val lift : 'a M.m -> 'a m
-  val run_error : 'a m -> 'a err M.m
 end

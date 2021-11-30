@@ -11,9 +11,10 @@
   option
   reader
   writer
+  result
+  retry
   stream
   state
-  retry
   continuation
   lazyPlus)
  (libraries batteries))
