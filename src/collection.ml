@@ -1,5 +1,3 @@
-open Monad
-
 module type T = sig
   include LazyPlus.T
 
@@ -10,8 +8,6 @@ module type T = sig
 end
 
 module MakeOpt (C : T) = struct
-  module O = Make (Option.M)
-
   let liftp2 p x y =
     match x, y with
     | None, _ -> true
