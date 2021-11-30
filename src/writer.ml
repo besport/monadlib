@@ -16,8 +16,7 @@ module Make (M : Monoid) = struct
   let write x = x, ()
 end
 
-module Trans (Mon : Monoid) (M : BatInterfaces.Monad) = struct
-  module M = Monad.Make (M)
+module Trans (Mon : Monoid) (M : Monad.Monad) = struct
   module W = Make (Mon)
 
   include Monad.Make (struct
@@ -53,7 +52,7 @@ module CollectionWriter (Mon : sig
 end)
 (C : Collection.T) =
 struct
-  include Trans (Mon) (C)
+  include Trans (Mon) (Monad.Make (C))
 
   let zero () = C.zero ()
   let lplus xs ys = C.lplus xs ys
