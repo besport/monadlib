@@ -53,6 +53,8 @@ module type MonadPlus = sig
   include BasePlus
   include Monad with type 'a m := 'a m
 
+  val ( ++ ) : 'a m -> 'a m -> 'a m
+  val ( +? ) : 'a m option -> 'a m -> 'a m
   val filter : ('a -> bool) -> 'a m -> 'a m
   val of_list : 'a list -> 'a m
   val sum : 'a list m -> 'a m

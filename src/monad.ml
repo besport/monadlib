@@ -22,6 +22,8 @@ module type MonadPlus = sig
   include BasePlus
   include Monad with type 'a m := 'a m
 
+  val ( ++ ) : 'a m -> 'a m -> 'a m
+  val ( +? ) : 'a m option -> 'a m -> 'a m
   val filter : ('a -> bool) -> 'a m -> 'a m
   val of_list : 'a list -> 'a m
   val sum : 'a list m -> 'a m
@@ -69,6 +71,8 @@ module MakePlus (M : BasePlus) = struct
 
   let zero () = M.zero ()
   let plus = M.plus
+  let ( ++ ) = M.plus
+  let ( +? ) x y = match x with None -> y | Some x -> x ++ y
   let null = M.null
   let filter p xs = xs >>= fun x -> if p x then return x else zero ()
   let of_list xs = List.fold_left (fun x y -> plus x (return y)) (zero ()) xs
