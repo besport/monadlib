@@ -20,11 +20,13 @@ module type Monoid = sig
   val plus : t -> t -> t
 end
 
+module type T = BatInterfaces.Monad
+
 (** {1 Library Types } *)
 
 (** Your basic library functions for monads. *)
-module type Monad = sig
-  include BatInterfaces.Monad
+module type S = sig
+  include T
   include Applicative.S with type 'a m := 'a m
 
   val ( >>= ) : 'a m -> ('a -> 'b m) -> 'b m
@@ -38,4 +40,4 @@ end
 
 (** {1 Library Creation} *)
 
-module Make (M : BatInterfaces.Monad) : Monad with type 'a m = 'a M.m
+module Make (M : T) : S with type 'a m = 'a M.m

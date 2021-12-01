@@ -1,4 +1,6 @@
-module type Monad = sig
+module type T = BatInterfaces.Monad
+
+module type S = sig
   include BatInterfaces.Monad
   include Applicative.S with type 'a m := 'a m
 

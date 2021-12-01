@@ -1,13 +1,13 @@
 open OUnit
 
 module type EquivMonad = sig
-  include BatMonad.S
+  include Monad.T
 
   val equiv : 'a m -> 'a m -> bool
 end
 
 module type EquivPlus = sig
-  include Monad.BasePlus
+  include MonadPlus.T
 
   val equiv : 'a m -> 'a m -> bool
 end
@@ -25,7 +25,7 @@ module BuildMonadTests (M : EquivMonad) = struct
 end
 
 module BuildPlusTests (M : EquivPlus) = struct
-  module B = Monad.MonadPlus.Make (M)
+  module B = MonadPlus.Make (M)
 
   let law1 x = M.equiv (B.plus (B.zero ()) x) x
   let law2 x = M.equiv x (B.plus (B.zero ()) x)

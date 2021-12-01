@@ -1,9 +1,7 @@
-open Monad
-
 module Make (T : sig
   type t
 end) : sig
-  include Monad
+  include Monad.S
 
   val read : T.t m
   val run : T.t -> 'a m -> 'a

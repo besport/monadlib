@@ -1,5 +1,3 @@
-open Monad
-
 module M = MonadPlus.Make (struct
   type 'a m = 'a option
 
@@ -13,8 +11,8 @@ module M = MonadPlus.Make (struct
   let null = BatOption.is_none
 end)
 
-module Trans (M : Monad) = struct
-  include Make (struct
+module Trans (M : Monad.S) = struct
+  include Monad.Make (struct
     type 'a m = 'a option M.m
 
     let return x = M.return (Some x)

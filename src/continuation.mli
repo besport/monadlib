@@ -1,5 +1,3 @@
-open Monad
-
 (** For the incorruptible programmer:
 
     A continuation of type 'a has type [('a -> 'r) -> 'r]
@@ -27,7 +25,7 @@ open Monad
 module Make (T : sig
   type r
 end) : sig
-  include Monad with type 'a m = ('a -> T.r) -> T.r
+  include Monad.S with type 'a m = ('a -> T.r) -> T.r
 
   val callCC : (('a -> 'r m) -> 'a m) -> 'a m
 end

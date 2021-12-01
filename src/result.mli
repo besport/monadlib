@@ -1,5 +1,3 @@
-open Monad
-
 module Make (E : sig
   type e
 
@@ -19,10 +17,10 @@ module Trans (E : sig
 
   val defaultError : e
 end)
-(M : Monad) : sig
+(M : Monad.S) : sig
   type 'a err = ('a, E.e) result
 
-  include Monad
+  include Monad.S
 
   val throw : E.e -> 'a m
   val catch : 'a m -> (E.e -> 'a m) -> 'a m

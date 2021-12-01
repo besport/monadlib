@@ -1,5 +1,3 @@
-open Monad
-
 (** Monads for collections. Stream is the current use-case for this, since it
     is parameterised on a collection monad (like [list]). *)
 module type T = sig
@@ -38,7 +36,7 @@ end
 
 module MakeOpt (C : T) : sig
   include T with type 'a m = 'a option C.m
-  include Monad with type 'a m := 'a m
+  include Monad.S with type 'a m := 'a m
 
   val cmp_on : ('a -> 'a -> bool) -> 'a option -> 'a option -> bool
   (** [cmp_on p] is a partial order satisfying:

@@ -1,6 +1,4 @@
-open Monad
-
-module Make (M : Monoid) = struct
+module Make (M : Monad.Monoid) = struct
   include Monad.Make (struct
     type 'a m = M.t * 'a
 
@@ -16,7 +14,7 @@ module Make (M : Monoid) = struct
   let write x = x, ()
 end
 
-module Trans (Mon : Monoid) (M : Monad.Monad) = struct
+module Trans (Mon : Monad.Monoid) (M : Monad.S) = struct
   module W = Make (Mon)
 
   include Monad.Make (struct
@@ -46,7 +44,7 @@ module Trans (Mon : Monoid) (M : Monad.Monad) = struct
 end
 
 module CollectionWriter (Mon : sig
-  include Monoid
+  include Monad.Monoid
 
   val cmp : t -> t -> bool
 end)

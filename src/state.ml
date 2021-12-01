@@ -1,10 +1,8 @@
-open Monad
-
 module Make (T : sig
   type s
 end) =
 struct
-  include Make (struct
+  include Monad.Make (struct
     type 'a m = T.s -> T.s * 'a
 
     let return x s = s, x
@@ -24,7 +22,7 @@ end
 module Trans (T : sig
   type s
 end)
-(M : Monad.Monad) =
+(M : Monad.S) =
 struct
   include Monad.Make (struct
     type 'a m = T.s -> (T.s * 'a) M.m

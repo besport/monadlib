@@ -1,5 +1,3 @@
-open Monad
-
 module M = MonadPlus.Make (struct
   type 'a m = 'a list
 
@@ -10,8 +8,8 @@ module M = MonadPlus.Make (struct
   let null = function [] -> true | _ -> false
 end)
 
-module Trans (M : Monad) = struct
-  include Make (struct
+module Trans (M : Monad.S) = struct
+  include Monad.Make (struct
     type 'a m = 'a list M.m
 
     let return x = M.return [x]

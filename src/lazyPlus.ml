@@ -1,7 +1,7 @@
 module Ll = LazyList
 
 module type T = sig
-  include BatInterfaces.Monad
+  include Monad.T
 
   val zero : unit -> 'a m
   val lplus : 'a m -> 'a m Stdlib.Lazy.t -> 'a m

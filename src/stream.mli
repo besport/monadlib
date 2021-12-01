@@ -1,5 +1,3 @@
-open Monad
-
 (** Streams supporting fair and unbounded search.
 
     Spivey has a nice and authoratitive paper on this, understanding streams as
@@ -83,7 +81,7 @@ end) : sig
   include
     S with type 'a t = 'a M.m LazyList.node_t and type 'a m = 'a M.m LazyList.t
 
-  include Monad with type 'a m := 'a m
+  include Monad.S with type 'a m := 'a m
 end
 
 (** Here, we create a stream monad from a definite collection monad

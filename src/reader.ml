@@ -1,10 +1,8 @@
-open Monad
-
 module Make (M : sig
   type t
 end) =
 struct
-  include Make (struct
+  include Monad.Make (struct
     type 'a m = M.t -> 'a
 
     let return x _ = x

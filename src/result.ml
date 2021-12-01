@@ -1,5 +1,3 @@
-open Monad
-
 module Make (E : sig
   type e
 
@@ -28,7 +26,7 @@ module Trans (E : sig
 
   val defaultError : e
 end)
-(M : Monad) =
+(M : Monad.S) =
 struct
   type 'a err = ('a, E.e) result
 

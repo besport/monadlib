@@ -1,9 +1,7 @@
-open Monad
-
 module Make (T : sig
   type s
 end) : sig
-  include Monad
+  include Monad.S
 
   val read : T.s m
   val write : T.s -> unit m
@@ -15,8 +13,8 @@ end
 module Trans (T : sig
   type s
 end)
-(M : Monad.Monad) : sig
-  include Monad
+(M : Monad.S) : sig
+  include Monad.S
 
   val read : T.s m
   val write : T.s -> unit m
@@ -33,7 +31,7 @@ module CollectionState (T : sig
 end)
 (C : Collection.T) : sig
   include Collection.T with type 'a m = T.s -> (T.s * 'a) C.m
-  include Monad with type 'a m := 'a m
+  include Monad.S with type 'a m := 'a m
 
   val read : T.s m
   val write : T.s -> unit m

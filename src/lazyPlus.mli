@@ -3,7 +3,7 @@
     argument, which makes it possible to use functions such as
     {! Monad.lsum} lazily. This is what you want for lazy lists. *)
 module type T = sig
-  include BatInterfaces.Monad
+  include Monad.T
 
   val zero : unit -> 'a m
   val lplus : 'a m -> 'a m Stdlib.Lazy.t -> 'a m
