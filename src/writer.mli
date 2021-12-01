@@ -1,4 +1,4 @@
-module Make (M : Monad.Monoid) : sig
+module Make (M : Monoid.T) : sig
   include Monad.S
 
   val listen : 'a m -> (M.t * 'a) m
@@ -6,7 +6,7 @@ module Make (M : Monad.Monoid) : sig
   val write : M.t -> unit m
 end
 
-module Trans (Mon : Monad.Monoid) (M : Monad.S) : sig
+module Trans (Mon : Monoid.T) (M : Monad.S) : sig
   include Monad.S
 
   val listen : 'a m -> (Mon.t * 'a) m
@@ -16,7 +16,7 @@ module Trans (Mon : Monad.Monoid) (M : Monad.S) : sig
 end
 
 module CollectionWriter (Mon : sig
-  include Monad.Monoid
+  include Monoid.T
 
   val cmp : t -> t -> bool
 end)

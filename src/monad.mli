@@ -11,20 +11,8 @@
     @author Phil Scott
  *)
 
-(** {1 Base Modules}*)
-
-module type Monoid = sig
-  type t
-
-  val zero : unit -> t
-  val plus : t -> t -> t
-end
-
 module type T = BatInterfaces.Monad
 
-(** {1 Library Types } *)
-
-(** Your basic library functions for monads. *)
 module type S = sig
   include T
   include Applicative.S with type 'a m := 'a m
@@ -37,7 +25,5 @@ module type S = sig
   val filter_map_list : ('a -> 'b option m) -> 'a list -> 'b list m
   val filter_list : ('a -> bool m) -> 'a list -> 'a list m
 end
-
-(** {1 Library Creation} *)
 
 module Make (M : T) : S with type 'a m = 'a M.m

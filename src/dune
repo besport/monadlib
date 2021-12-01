@@ -12,6 +12,7 @@
   list
   monad
   monadPlus
+  monoid
   option
   reader
   result

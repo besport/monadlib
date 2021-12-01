@@ -50,10 +50,3 @@ module Make (M : BatInterfaces.Monad) = struct
     in
     loop (return [])
 end
-
-module type Monoid = sig
-  type t
-
-  val zero : unit -> t
-  val plus : t -> t -> t
-end
