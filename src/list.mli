@@ -1,5 +1,5 @@
 open Monad
-module M : MonadPlus with type 'a m = 'a list
+module M : MonadPlus.S with type 'a m = 'a list
 
 (** The list monad transformer will add non-determinism to computations. I
     have not provided a transformer for lazy lists, since I'm not yet sure how

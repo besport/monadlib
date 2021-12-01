@@ -11,6 +11,7 @@
   lazyPlus
   list
   monad
+  monadPlus
   option
   reader
   result

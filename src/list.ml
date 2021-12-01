@@ -1,6 +1,6 @@
 open Monad
 
-module M = MakePlus (struct
+module M = MonadPlus.Make (struct
   type 'a m = 'a list
 
   let return x = [x]

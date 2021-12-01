@@ -1,11 +1,3 @@
-module type BasePlus = sig
-  include BatInterfaces.Monad
-
-  val zero : unit -> 'a m
-  val plus : 'a m -> 'a m -> 'a m
-  val null : 'a m -> bool
-end
-
 module type Monad = sig
   include BatInterfaces.Monad
   include Applicative.S with type 'a m := 'a m
@@ -17,20 +9,6 @@ module type Monad = sig
   val join : 'a m m -> 'a m
   val filter_map_list : ('a -> 'b option m) -> 'a list -> 'b list m
   val filter_list : ('a -> bool m) -> 'a list -> 'a list m
-end
-
-module type MonadPlus = sig
-  include BasePlus
-  include Monad with type 'a m := 'a m
-
-  val ( ++ ) : 'a m -> 'a m -> 'a m
-  val ( +? ) : 'a m option -> 'a m -> 'a m
-  val filter : ('a -> bool) -> 'a m -> 'a m
-  val of_list : 'a list -> 'a m
-  val sum : 'a list m -> 'a m
-  val msum : 'a m list -> 'a m
-  val guard : bool -> unit m
-  val transpose : 'a list m -> 'a m list
 end
 
 module List = BatList
@@ -69,28 +47,6 @@ module Make (M : BatInterfaces.Monad) = struct
             xs
     in
     loop (return [])
-end
-
-module MakePlus (M : BasePlus) = struct
-  include Make (M)
-
-  let zero () = M.zero ()
-  let plus = M.plus
-  let ( ++ ) = M.plus
-  let ( +? ) x y = match x with None -> y | Some x -> x ++ y
-  let null = M.null
-  let filter p xs = xs >>= fun x -> if p x then return x else zero ()
-  let of_list xs = List.fold_left (fun x y -> plus x (return y)) (zero ()) xs
-
-  let sum xs =
-    xs >>= fun xs -> List.fold_right plus (List.map return xs) (zero ())
-
-  let msum xs = List.fold_left plus (zero ()) xs
-  let guard b = if b then return () else zero ()
-
-  let rec transpose xs =
-    let hds = sum (map (BatList.take 1) xs) in
-    if null hds then [] else hds :: transpose (map (BatList.drop 1) xs)
 end
 
 module type Monoid = sig

@@ -25,7 +25,7 @@ module BuildMonadTests (M : EquivMonad) = struct
 end
 
 module BuildPlusTests (M : EquivPlus) = struct
-  module B = Monad.MakePlus (M)
+  module B = Monad.MonadPlus.Make (M)
 
   let law1 x = M.equiv (B.plus (B.zero ()) x) x
   let law2 x = M.equiv x (B.plus (B.zero ()) x)

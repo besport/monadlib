@@ -20,19 +20,6 @@ module type Monoid = sig
   val plus : t -> t -> t
 end
 
-(** Monads with additional monoid structure. *)
-module type BasePlus = sig
-  include BatInterfaces.Monad
-
-  val zero : unit -> 'a m
-  val plus : 'a m -> 'a m -> 'a m
-
-  val null : 'a m -> bool
-  (** null x implies that x is zero. If you do not want to or cannot
-      answer whether a given x is zero, then null x should be false. I have
-      provided this so that streams can be implemented more efficiently. *)
-end
-
 (** {1 Library Types } *)
 
 (** Your basic library functions for monads. *)
@@ -49,25 +36,6 @@ module type Monad = sig
   val filter_list : ('a -> bool m) -> 'a list -> 'a list m
 end
 
-(** Library functions for monads with additional monoid structure. *)
-module type MonadPlus = sig
-  include BasePlus
-  include Monad with type 'a m := 'a m
-
-  val ( ++ ) : 'a m -> 'a m -> 'a m
-  val ( +? ) : 'a m option -> 'a m -> 'a m
-  val filter : ('a -> bool) -> 'a m -> 'a m
-  val of_list : 'a list -> 'a m
-  val sum : 'a list m -> 'a m
-  val msum : 'a m list -> 'a m
-  val guard : bool -> unit m
-
-  val transpose : 'a list m -> 'a m list
-  (** Generalises matrix transposition. This will loop infinitely if
-  {! BasePlus.null} cannot answer [true] for [zero]es. *)
-end
-
 (** {1 Library Creation} *)
 
 module Make (M : BatInterfaces.Monad) : Monad with type 'a m = 'a M.m
-module MakePlus (M : BasePlus) : MonadPlus with type 'a m = 'a M.m

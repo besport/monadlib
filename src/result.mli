@@ -7,7 +7,7 @@ module Make (E : sig
 end) : sig
   type 'a err = ('a, E.e) result
 
-  include MonadPlus
+  include MonadPlus.S
 
   val throw : E.e -> 'a m
   val catch : 'a m -> (E.e -> 'a m) -> 'a m

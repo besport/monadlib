@@ -1,5 +1,3 @@
-open Monad
-
 module Make (E : sig
   type e
   type arg
@@ -10,7 +8,7 @@ end) =
 struct
   type 'a err = Error of (E.tag * (E.arg -> 'a err)) list * E.e | Ok of 'a
 
-  include MakePlus (struct
+  include MonadPlus.Make (struct
     type 'a m = 'a err
 
     let return x = Ok x

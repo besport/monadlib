@@ -1,4 +1,3 @@
-open Monad
 module Ll = LazyList
 
 module type T = sig
@@ -11,7 +10,7 @@ end
 
 module type S = sig
   include T
-  include MonadPlus with type 'a m := 'a m
+  include MonadPlus.S with type 'a m := 'a m
 
   val of_llist : 'a Ll.t -> 'a m
   val lsum : 'a Ll.t m -> 'a m
@@ -20,7 +19,7 @@ module type S = sig
 end
 
 module Make (M : T) = struct
-  include MakePlus (struct
+  include MonadPlus.Make (struct
     include M
 
     let plus x y = M.lplus x (lazy y)

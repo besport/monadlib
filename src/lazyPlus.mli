@@ -1,5 +1,3 @@
-open Monad
-
 (** S is another base module useful when the monad is a lazy data
     structure. We then allow the plus operation to be non-strict in its second
     argument, which makes it possible to use functions such as
@@ -18,7 +16,7 @@ end
 (** This is the counterpart for the lazy version of {! BasePlus}. *)
 module type S = sig
   include T
-  include MonadPlus with type 'a m := 'a m
+  include MonadPlus.S with type 'a m := 'a m
 
   val of_llist : 'a LazyList.t -> 'a m
   val lsum : 'a LazyList.t m -> 'a m

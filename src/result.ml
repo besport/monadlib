@@ -8,7 +8,7 @@ end) =
 struct
   type 'a err = ('a, E.e) result
 
-  include MakePlus (struct
+  include MonadPlus.Make (struct
     type 'a m = 'a err
 
     let return x = Ok x
@@ -32,7 +32,7 @@ end)
 struct
   type 'a err = ('a, E.e) result
 
-  include MakePlus (struct
+  include MonadPlus.Make (struct
     type 'a m = 'a err M.m
 
     let return x = M.return (Ok x)

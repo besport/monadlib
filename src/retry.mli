@@ -1,5 +1,3 @@
-open Monad
-
 module Make (E : sig
   type e
   type arg
@@ -7,7 +5,7 @@ module Make (E : sig
 
   val defaultError : e
 end) : sig
-  include MonadPlus
+  include MonadPlus.S
 
   type 'a err = Error of (E.tag * (E.arg -> 'a m)) list * E.e | Ok of 'a
 

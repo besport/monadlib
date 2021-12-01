@@ -1,5 +1,5 @@
 open Monad
-module M : MonadPlus with type 'a m = 'a option
+module M : MonadPlus.S with type 'a m = 'a option
 
 module Trans (M : Monad) : sig
   include Monad with type 'a m = 'a option M.m
