@@ -5,7 +5,7 @@ module type T = sig
   include BatInterfaces.Monad
 
   val zero : unit -> 'a m
-  val lplus : 'a m -> 'a m Lazy.t -> 'a m
+  val lplus : 'a m -> 'a m Stdlib.Lazy.t -> 'a m
   val null : 'a m -> bool
 end
 
@@ -54,7 +54,7 @@ module LazyList = struct
     let rec lplus xs ys =
       lazy
         (match Ll.next xs with
-        | Ll.Nil -> Ll.next (Lazy.force ys)
+        | Ll.Nil -> Ll.next (Stdlib.Lazy.force ys)
         | Ll.Cons (x, xs) -> Ll.Cons (x, lplus xs ys))
 
     let null = Ll.is_empty

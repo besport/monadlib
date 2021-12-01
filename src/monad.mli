@@ -75,14 +75,3 @@ module MakePlus (M : BasePlus) : MonadPlus with type 'a m = 'a M.m
 (** {1 Specific monads} *)
 
 module Identity : Monad with type 'a m = 'a
-
-module LazyM : Monad with type 'a m = 'a Lazy.t
-(** The lazy monad. Automatically wraps calls lazily and forces as needed. *)
-
-(** {1 Transformers} *)
-
-module LazyT (M : Monad) : sig
-  include Monad with type 'a m = 'a Lazy.t M.m
-
-  val lift : 'a M.m -> 'a m
-end

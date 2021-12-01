@@ -100,24 +100,6 @@ module Identity : Monad with type 'a m = 'a = Make (struct
   let bind x f = f x
 end)
 
-module LazyM = Make (struct
-  type 'a m = 'a Lazy.t
-
-  let return x = lazy x
-  let bind x f = lazy (Lazy.force (f (Lazy.force x)))
-end)
-
-module LazyT (M : Monad) = struct
-  include Make (struct
-    type 'a m = 'a Lazy.t M.m
-
-    let return x = M.return (lazy x)
-    let bind x f = M.bind x (fun x -> f (Lazy.force x))
-  end)
-
-  let lift x = M.map (fun x -> lazy x) x
-end
-
 module type Monoid = sig
   type t
 

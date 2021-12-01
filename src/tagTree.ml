@@ -72,10 +72,10 @@ struct
   let combine, simplify =
     let dest_tree tree =
       ( lazy
-          (let (Node (root, _)) = Lazy.force tree in
+          (let (Node (root, _)) = Stdlib.Lazy.force tree in
            next root)
       , lazy
-          (let (Node (_, cs)) = Lazy.force tree in
+          (let (Node (_, cs)) = Stdlib.Lazy.force tree in
            next cs) )
     in
     let rec simp_children ancestor_tags uncle_tags tagged_xs =
@@ -103,19 +103,19 @@ struct
             -> Tag.t LazyList.t
             -> Tag.t LazyList.t
             -> (Tag.t, 'a LazyList.t) node
-            -> (Tag.t, 'b LazyList.t) node Lazy.t
+            -> (Tag.t, 'b LazyList.t) node Stdlib.Lazy.t
             -> (Tag.t, 'c) node
       =
      fun f ancestor_tags uncle_tags tree_x tree_y ->
       let (Node (x, tagged_xs)) = tree_x in
       let y =
         lazy
-          (let (Node (y, _)) = Lazy.force tree_y in
+          (let (Node (y, _)) = Stdlib.Lazy.force tree_y in
            next y)
       in
       let tagged_ys =
         lazy
-          (let (Node (_, tagged_ys)) = Lazy.force tree_y in
+          (let (Node (_, tagged_ys)) = Stdlib.Lazy.force tree_y in
            next tagged_ys)
       in
       Node
@@ -124,7 +124,7 @@ struct
             (if is_empty tagged_xs
             then
               let (Node (_, tagged_ys')) =
-                simplify ancestor_tags uncle_tags (Lazy.force tree_y)
+                simplify ancestor_tags uncle_tags (Stdlib.Lazy.force tree_y)
               in
               next (map2 (map_tree (f nil)) tagged_ys')
             else

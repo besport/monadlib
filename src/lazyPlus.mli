@@ -8,7 +8,7 @@ module type T = sig
   include BatInterfaces.Monad
 
   val zero : unit -> 'a m
-  val lplus : 'a m -> 'a m Lazy.t -> 'a m
+  val lplus : 'a m -> 'a m Stdlib.Lazy.t -> 'a m
 
   val null : 'a m -> bool
   (** null x implies that x is zero. If you do not want to or cannot

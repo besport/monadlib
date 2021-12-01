@@ -51,7 +51,7 @@ struct
   include Trans (T) (Monad.Make (C))
 
   let zero () _ = C.zero ()
-  let lplus xs ys s = C.lplus (xs s) (lazy (Lazy.force ys s))
+  let lplus xs ys s = C.lplus (xs s) (lazy (Stdlib.Lazy.force ys s))
   let null _ = false
   let cmp_on p (s, x) (t, y) = p x y && T.cmp s t
   let difference p xs ys s = C.difference (cmp_on p) (xs s) (ys s)

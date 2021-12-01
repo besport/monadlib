@@ -47,7 +47,7 @@ open Monad
 module type S = sig
   type 'a t
 
-  include LazyPlus.S with type 'a m = 'a t Lazy.t
+  include LazyPlus.S with type 'a m = 'a t Stdlib.Lazy.t
 
   val iterate : ('a m -> 'a m) -> 'a m -> 'a m
   (** The sum of the stream [\[f x, f (f x), f (f (f x)),...\]] *)

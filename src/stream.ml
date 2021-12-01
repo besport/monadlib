@@ -6,7 +6,7 @@ let ( ^@^ ) = Ll.( ^@^ )
 module type S = sig
   type 'a t
 
-  include LazyPlus.S with type 'a m = 'a t Lazy.t
+  include LazyPlus.S with type 'a m = 'a t Stdlib.Lazy.t
 
   val iterate : ('a m -> 'a m) -> 'a m -> 'a m
   val delay : 'a m -> 'a m
@@ -30,25 +30,25 @@ struct
   let delay xs = M.zero () ^:^ xs
 
   module Base = struct
-    type 'a m = 'a t Lazy.t
+    type 'a m = 'a t Stdlib.Lazy.t
 
     let zero () = Ll.nil
 
     let rec lplus xss yss =
       let hd_yss =
         lazy
-          (match Ll.next (Lazy.force yss) with
+          (match Ll.next (Stdlib.Lazy.force yss) with
           | Ll.Nil -> ML.zero ()
           | Ll.Cons (ys, _) -> ys)
       and tl_yss =
         lazy
-          (match Ll.next (Lazy.force yss) with
+          (match Ll.next (Stdlib.Lazy.force yss) with
           | Ll.Nil -> Ll.nil
           | Ll.Cons (_, yss) -> yss)
       in
       lazy
         (match Ll.next xss with
-        | Ll.Nil -> Ll.next (Lazy.force yss)
+        | Ll.Nil -> Ll.next (Stdlib.Lazy.force yss)
         | Ll.Cons (xs, xss) -> Ll.Cons (ML.lplus xs hd_yss, lplus xss tl_yss))
 
     let plus xss yss = lplus xss (lazy yss)

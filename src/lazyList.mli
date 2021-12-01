@@ -4,7 +4,7 @@
 
 (** {1 Types} *)
 
-type 'a t = 'a node_t Lazy.t
+type 'a t = 'a node_t Stdlib.Lazy.t
 
 and 'a node_t = Nil | Cons of 'a * 'a t
 
@@ -87,8 +87,8 @@ val zip : 'a t -> 'b t -> ('a * 'b) t
 (** Zip with pairing. *)
 
 val unzip : ('a * 'b) t -> 'a t * 'b t
-val fold_right : ('a -> 'b Lazy.t -> 'b) -> 'b -> 'a t -> 'b
-val fold_right1 : ('a -> 'a Lazy.t -> 'a) -> 'a t -> 'a
+val fold_right : ('a -> 'b Stdlib.Lazy.t -> 'b) -> 'b -> 'a t -> 'b
+val fold_right1 : ('a -> 'a Stdlib.Lazy.t -> 'a) -> 'a t -> 'a
 val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b t -> 'a
 val fold_left1 : ('a -> 'a -> 'a) -> 'a t -> 'a
 
@@ -101,10 +101,10 @@ val map_accum_l : ('acc -> 'a -> 'acc * 'b) -> 'acc -> 'a t -> 'b t
 (** Maps a function across a list whilst accumulating a state value. *)
 
 val map_accum_l2
-  :  ('acc -> 'a -> 'acc Lazy.t * 'b)
+  :  ('acc -> 'a -> 'acc Stdlib.Lazy.t * 'b)
   -> 'acc
   -> 'a t
-  -> 'acc Lazy.t * 'b t
+  -> 'acc Stdlib.Lazy.t * 'b t
 (** As map_accum_l, but also returns the final accumulated value. The input
     list will be forced only once, even if both components of the pair are
     forced. However, two passes of the list are still required. *)

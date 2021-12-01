@@ -2,12 +2,13 @@
  (name monadlib)
  (public_name monadlib)
  (modules
-  lazyList
   tagTree
-  monad
   applicative
   collection
+  lazy
+  lazyList
   list
+  monad
   option
   reader
   writer

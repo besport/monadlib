@@ -16,8 +16,8 @@ include BatLazyList
 module Bl = BatList
 module List = BatList
 
-let of_delay xs = Lazy.from_fun (fun () -> next (xs ()))
-let next l = Lazy.force l
+let of_delay xs = Stdlib.Lazy.from_fun (fun () -> next (xs ()))
+let next l = Stdlib.Lazy.force l
 let singleton x = x ^:^ nil
 let repeat x = from (fun () -> x)
 let is_non_empty xs = match next xs with Nil -> false | _ -> true
@@ -233,12 +233,12 @@ let rec unzip xys =
 let cat_option xs = filter_map (fun x -> x) xs
 
 let rec is_forced xs =
-  if Lazy.is_val xs
+  if Stdlib.Lazy.is_val xs
   then match next xs with Cons (_, xs) -> is_forced xs | Nil -> true
   else false
 
 let rec to_forced xs =
-  if Lazy.is_val xs
+  if Stdlib.Lazy.is_val xs
   then
     match next xs with
     | Cons (x, xs) -> lazy (Cons (x, to_forced xs))
