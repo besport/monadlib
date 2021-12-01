@@ -45,6 +45,7 @@ module type Monad = sig
   val ( >=> ) : ('a -> 'b m) -> ('b -> 'c m) -> 'a -> 'c m
   val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
   val join : 'a m m -> 'a m
+  val filter_map_list : ('a -> 'b option m) -> 'a list -> 'b list m
   val filter_list : ('a -> bool m) -> 'a list -> 'a list m
 end
 
