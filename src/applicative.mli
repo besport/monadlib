@@ -40,7 +40,7 @@ module type S = sig
   (** Binding operator for map *)
 
   val sequence : 'a m list -> 'a list m
-  val map_a : ('a -> 'b m) -> 'a list -> 'b list m
+  val map_list : ('a -> 'b m) -> 'a list -> 'b list m
   val ( <* ) : 'a m -> 'b m -> 'a m
   val ( >* ) : 'a m -> 'b m -> 'b m
   val ignore : 'a m -> unit m

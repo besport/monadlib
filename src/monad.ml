@@ -15,7 +15,7 @@ module type Monad = sig
   val ( >=> ) : ('a -> 'b m) -> ('b -> 'c m) -> 'a -> 'c m
   val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
   val join : 'a m m -> 'a m
-  val filter_m : ('a -> bool m) -> 'a list -> 'a list m
+  val filter_list : ('a -> bool m) -> 'a list -> 'a list m
 end
 
 module type MonadPlus = sig
@@ -52,7 +52,7 @@ module Make (M : BatInterfaces.Monad) = struct
 
   let join m = m >>= fun x -> x
 
-  let filter_m p =
+  let filter_list p =
     let rec loop m = function
       | [] -> map List.rev m
       | x :: xs ->

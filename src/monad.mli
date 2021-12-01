@@ -45,7 +45,7 @@ module type Monad = sig
   val ( >=> ) : ('a -> 'b m) -> ('b -> 'c m) -> 'a -> 'c m
   val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
   val join : 'a m m -> 'a m
-  val filter_m : ('a -> bool m) -> 'a list -> 'a list m
+  val filter_list : ('a -> bool m) -> 'a list -> 'a list m
 end
 
 (** Library functions for monads with additional monoid structure. *)
