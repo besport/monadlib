@@ -93,13 +93,6 @@ module MakePlus (M : BasePlus) = struct
     if null hds then [] else hds :: transpose (map (BatList.drop 1) xs)
 end
 
-module Identity : Monad with type 'a m = 'a = Make (struct
-  type 'a m = 'a
-
-  let return x = x
-  let bind x f = f x
-end)
-
 module type Monoid = sig
   type t
 

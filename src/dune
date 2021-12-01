@@ -2,22 +2,23 @@
  (name monadlib)
  (public_name monadlib)
  (modules
-  tagTree
   applicative
   collection
+  continuation
+  identity
   lazy
   lazyList
+  lazyPlus
   list
   monad
   option
   reader
-  writer
   result
   retry
-  stream
   state
-  continuation
-  lazyPlus)
+  stream
+  tagTree
+  writer)
  (libraries batteries))
 
 (env

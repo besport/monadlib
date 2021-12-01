@@ -71,7 +71,3 @@ end
 
 module Make (M : BatInterfaces.Monad) : Monad with type 'a m = 'a M.m
 module MakePlus (M : BasePlus) : MonadPlus with type 'a m = 'a M.m
-
-(** {1 Specific monads} *)
-
-module Identity : Monad with type 'a m = 'a
