@@ -48,6 +48,25 @@ module type S = sig
   val ignore : 'a m -> unit m
   val onlyif : bool -> unit m -> unit m
   val unless : bool -> unit m -> unit m
+
+  module Tuple2 : sig
+    val map : ('a -> 'b m) -> ('c -> 'd m) -> 'a * 'c -> ('b * 'd) m
+    val map1 : ('a -> 'b m) -> 'a * 'c -> ('b * 'c) m
+    val map2 : ('a -> 'b m) -> 'c * 'a -> ('c * 'b) m
+  end
+
+  module Tuple3 : sig
+    val map
+      :  ('a -> 'b m)
+      -> ('c -> 'd m)
+      -> ('e -> 'f m)
+      -> 'a * 'c * 'e
+      -> ('b * 'd * 'f) m
+
+    val map1 : ('a -> 'b m) -> 'a * 'c * 'd -> ('b * 'c * 'd) m
+    val map2 : ('a -> 'b m) -> 'c * 'a * 'd -> ('c * 'b * 'd) m
+    val map3 : ('a -> 'b m) -> 'c * 'd * 'a -> ('c * 'd * 'b) m
+  end
 end
 
 (** {1 Library Creation} *)

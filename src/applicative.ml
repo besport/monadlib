@@ -31,6 +31,25 @@ module type S = sig
   val ignore : 'a m -> unit m
   val onlyif : bool -> unit m -> unit m
   val unless : bool -> unit m -> unit m
+
+  module Tuple2 : sig
+    val map : ('a -> 'b m) -> ('c -> 'd m) -> 'a * 'c -> ('b * 'd) m
+    val map1 : ('a -> 'b m) -> 'a * 'c -> ('b * 'c) m
+    val map2 : ('a -> 'b m) -> 'c * 'a -> ('c * 'b) m
+  end
+
+  module Tuple3 : sig
+    val map
+      :  ('a -> 'b m)
+      -> ('c -> 'd m)
+      -> ('e -> 'f m)
+      -> 'a * 'c * 'e
+      -> ('b * 'd * 'f) m
+
+    val map1 : ('a -> 'b m) -> 'a * 'c * 'd -> ('b * 'c * 'd) m
+    val map2 : ('a -> 'b m) -> 'c * 'a * 'd -> ('c * 'b * 'd) m
+    val map3 : ('a -> 'b m) -> 'c * 'd * 'a -> ('c * 'd * 'b) m
+  end
 end
 
 module Make (A : T) = struct
@@ -59,6 +78,21 @@ module Make (A : T) = struct
   let ignore m = map (fun _ -> ()) m
   let onlyif b m = if b then m else return ()
   let unless b m = if b then return () else m
+
+  open BatTuple
+
+  module Tuple2 = struct
+    let map f g (x, y) = Tuple2.make <$> f x <*> g y
+    let map1 f (x, y) = (fun x -> x, y) <$> f x
+    let map2 f (x, y) = Tuple2.make x <$> f y
+  end
+
+  module Tuple3 = struct
+    let map f g h (x, y, z) = Tuple3.make <$> f x <*> g y <*> h z
+    let map1 f (x, y, z) = (fun x -> x, y, z) <$> f x
+    let map2 f (x, y, z) = (fun y -> x, y, z) <$> f y
+    let map3 f (x, y, z) = (fun z -> x, y, z) <$> f z
+  end
 end
 
 module Transform (A : T) (Inner : T) = struct
