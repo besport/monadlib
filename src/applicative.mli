@@ -41,6 +41,8 @@ module type S = sig
 
   val sequence : 'a m list -> 'a list m
   val map_list : ('a -> 'b m) -> 'a list -> 'b list m
+  val optional : 'a m option -> 'a option m
+  val map_option : ('a -> 'b m) -> 'a option -> 'b option m
   val ( <* ) : 'a m -> 'b m -> 'a m
   val ( >* ) : 'a m -> 'b m -> 'b m
   val ignore : 'a m -> unit m

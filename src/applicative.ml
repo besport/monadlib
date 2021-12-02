@@ -24,6 +24,8 @@ module type S = sig
   val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
   val sequence : 'a m list -> 'a list m
   val map_list : ('a -> 'b m) -> 'a list -> 'b list m
+  val optional : 'a m option -> 'a option m
+  val map_option : ('a -> 'b m) -> 'a option -> 'b option m
   val ( <* ) : 'a m -> 'b m -> 'a m
   val ( >* ) : 'a m -> 'b m -> 'b m
   val ignore : 'a m -> unit m
@@ -48,6 +50,12 @@ module Make (A : T) = struct
     | m :: ms -> map2 (fun x xs -> x :: xs) m (sequence ms)
 
   let map_list f xs = sequence (BatList.map f xs)
+
+  let optional = function
+    | None -> return None
+    | Some f -> map (fun y -> Some y) f
+
+  let map_option f xs = optional (BatOption.map f xs)
   let ignore m = map (fun _ -> ()) m
   let onlyif b m = if b then m else return ()
   let unless b m = if b then return () else m
