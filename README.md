@@ -6,7 +6,7 @@ Description
 
 A starter monad library in Ocaml. Monad library functions are generated from implementations of BatInterfaces.Monad. Generated documentation can be found at http://chattered.github.com/ocaml-monad.
 
-We support monads with the additional "plus" structure, and provide a lazy variant useful for monads such as LazyList. 
+We support monads with the additional "plus" structure, and provide a lazy variant useful for monads such as LazyList.
 
 The lazy lists here are lazier than those of BatLazyList. If you're writing really recursive lazy lists, you'll probably find you need these versions of the functions. Simple example: as of writing, concat in BatLazyList is implemented as a left fold with append. This makes it strict in the outer list, which isn't always what you want.
 
@@ -25,4 +25,3 @@ Installation
 For documentation:
 
     $ dune build @doc
-
