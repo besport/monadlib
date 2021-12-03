@@ -23,6 +23,7 @@ module type S = sig
   val ( <$> ) : ('a -> 'b) -> 'a m -> 'b m
   val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
   val sequence : 'a m list -> 'a list m
+  val sequence_unit : unit m list -> unit m
   val map_list : ('a -> 'b m) -> 'a list -> 'b list m
   val optional : 'a m option -> 'a option m
   val map_option : ('a -> 'b m) -> 'a option -> 'b option m
@@ -67,6 +68,10 @@ module Make (A : T) = struct
   let rec sequence = function
     | [] -> return []
     | m :: ms -> map2 (fun x xs -> x :: xs) m (sequence ms)
+
+  let rec sequence_unit = function
+    | [] -> return ()
+    | m :: ms -> m >* sequence_unit ms
 
   let map_list f xs = sequence (BatList.map f xs)
 
