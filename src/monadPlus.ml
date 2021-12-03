@@ -19,6 +19,8 @@ module type S = sig
   val sum : 'a list m -> 'a m
   val msum : 'a m list -> 'a m
   val guard : bool -> unit m
+  val only_if : bool -> (unit -> 'a) -> 'a m
+  val only_if_value : bool -> 'a -> 'a m
   val transpose : 'a list m -> 'a m list
 end
 
@@ -38,6 +40,8 @@ module Make (M : T) = struct
 
   let msum xs = List.fold_left plus (zero ()) xs
   let guard b = if b then return () else zero ()
+  let only_if b v = if b then return @@ v () else zero ()
+  let only_if_value b v = if b then return v else zero ()
 
   let rec transpose xs =
     let hds = sum (map (BatList.take 1) xs) in

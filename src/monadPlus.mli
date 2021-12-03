@@ -23,6 +23,8 @@ module type S = sig
   val sum : 'a list m -> 'a m
   val msum : 'a m list -> 'a m
   val guard : bool -> unit m
+  val only_if : bool -> (unit -> 'a) -> 'a m
+  val only_if_value : bool -> 'a -> 'a m
 
   val transpose : 'a list m -> 'a m list
   (** Generalises matrix transposition. This will loop infinitely if
