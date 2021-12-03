@@ -20,7 +20,7 @@ module type S = sig
     -> 'd m
     -> 'e m
 
-  val ( <$> ) : ('a -> 'b) -> 'a m -> 'b m
+  val ( $ ) : ('a -> 'b) -> 'a m -> 'b m
   val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
   val sequence : 'a m list -> 'a list m
   val sequence_unit : unit m list -> unit m
@@ -56,12 +56,12 @@ end
 module Make (A : T) = struct
   include A
 
-  let ( <$> ) f x = return f <*> x
-  let map = ( <$> )
-  let ( let$ ) x f = f <$> x
-  let map2 f x y = f <$> x <*> y
-  let map3 f x y z = f <$> x <*> y <*> z
-  let map4 f x y z w = f <$> x <*> y <*> z <*> w
+  let ( $ ) f x = return f <*> x
+  let map = ( $ )
+  let ( let$ ) x f = f $ x
+  let map2 f x y = f $ x <*> y
+  let map3 f x y z = f $ x <*> y <*> z
+  let map4 f x y z w = f $ x <*> y <*> z <*> w
   let ( <* ) x y = map2 (fun x _ -> x) x y
   let ( *> ) x y = map2 (fun _ y -> y) x y
 
@@ -87,16 +87,16 @@ module Make (A : T) = struct
   open BatTuple
 
   module Tuple2 = struct
-    let map f g (x, y) = Tuple2.make <$> f x <*> g y
-    let map1 f (x, y) = (fun x -> x, y) <$> f x
-    let map2 f (x, y) = Tuple2.make x <$> f y
+    let map f g (x, y) = Tuple2.make $ f x <*> g y
+    let map1 f (x, y) = (fun x -> x, y) $ f x
+    let map2 f (x, y) = Tuple2.make x $ f y
   end
 
   module Tuple3 = struct
-    let map f g h (x, y, z) = Tuple3.make <$> f x <*> g y <*> h z
-    let map1 f (x, y, z) = (fun x -> x, y, z) <$> f x
-    let map2 f (x, y, z) = (fun y -> x, y, z) <$> f y
-    let map3 f (x, y, z) = (fun z -> x, y, z) <$> f z
+    let map f g h (x, y, z) = Tuple3.make $ f x <*> g y <*> h z
+    let map1 f (x, y, z) = (fun x -> x, y, z) $ f x
+    let map2 f (x, y, z) = (fun y -> x, y, z) $ f y
+    let map3 f (x, y, z) = (fun z -> x, y, z) $ f z
   end
 end
 

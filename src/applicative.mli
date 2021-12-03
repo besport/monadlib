@@ -33,7 +33,7 @@ module type S = sig
     -> 'd m
     -> 'e m
 
-  val ( <$> ) : ('a -> 'b) -> 'a m -> 'b m
+  val ( $ ) : ('a -> 'b) -> 'a m -> 'b m
   (** Alias for map *)
 
   val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
