@@ -1,8 +1,6 @@
 module M = MonadPlus.Make (struct
-  type 'a m = 'a option
+  include BatOption.Monad
 
-  let return x = Some x
-  let bind x f = match x with None -> None | Some y -> f y
   let zero () = None
 
   let plus x y =
