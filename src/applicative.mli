@@ -45,7 +45,7 @@ module type S = sig
   val optional : 'a m option -> 'a option m
   val map_option : ('a -> 'b m) -> 'a option -> 'b option m
   val ( <* ) : 'a m -> 'b m -> 'a m
-  val ( >* ) : 'a m -> 'b m -> 'b m
+  val ( *> ) : 'a m -> 'b m -> 'b m
   val ignore : 'a m -> unit m
   val onlyif : bool -> unit m -> unit m
   val unless : bool -> unit m -> unit m
