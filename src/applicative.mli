@@ -49,6 +49,7 @@ module type S = sig
   val ignore : 'a m -> unit m
   val onlyif : bool -> unit m -> unit m
   val unless : bool -> unit m -> unit m
+  val do_if : bool -> (unit -> unit m) -> unit m
 
   module Tuple2 : sig
     val map : ('a -> 'b m) -> ('c -> 'd m) -> 'a * 'c -> ('b * 'd) m
