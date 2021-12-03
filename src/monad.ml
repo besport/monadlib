@@ -10,6 +10,8 @@ module type S = sig
   val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
   val join : 'a m m -> 'a m
   val filter_map_list : ('a -> 'b option m) -> 'a list -> 'b list m
+  val fold_left : ('a -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
+  val fold_right : ('a -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
   val filter_list : ('a -> bool m) -> 'a list -> 'a list m
 end
 
@@ -39,14 +41,21 @@ module Make (M : BatInterfaces.Monad) = struct
     let> l = sequence @@ List.map p xs in
     return (List.filter_map BatPervasives.identity l)
 
-  let filter_list p =
-    let rec loop m = function
-      | [] -> map List.rev m
-      | x :: xs ->
-          loop
-            ( p x >>= fun b ->
-              m >>= fun ys -> return (if b then x :: ys else ys) )
-            xs
+  let fold_left f acc l =
+    let rec loop acc = function
+      | [] -> return acc
+      | h :: t -> f acc h >>= fun h' -> loop h' t
     in
-    loop (return [])
+    loop acc l
+
+  let fold_right f acc l =
+    let rec loop acc = function
+      | [] -> return acc
+      | h :: t -> loop acc t >>= f h
+    in
+    loop acc l
+
+  let filter_list p l =
+    let f acc x = p x >>= fun b -> return @@ if b then x :: acc else acc in
+    fold_left f [] l
 end

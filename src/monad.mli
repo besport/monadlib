@@ -23,6 +23,8 @@ module type S = sig
   val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
   val join : 'a m m -> 'a m
   val filter_map_list : ('a -> 'b option m) -> 'a list -> 'b list m
+  val fold_left : ('a -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
+  val fold_right : ('a -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
   val filter_list : ('a -> bool m) -> 'a list -> 'a list m
 end
 
