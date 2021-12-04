@@ -37,13 +37,11 @@ module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
   let ( let> ) = bind
   let ( >=> ) g f x = g x >>= f
   let ( <=< ) f g x = g x >>= f
-  let map f x = x >>= fun x -> return (f x)
-  let map2 f x y = x >>= fun x -> map (f x) y
 
   module Ap = Applicative.Make (struct
     include M
 
-    let ( <*> ) f x = map2 (fun f x -> f x) f x
+    let ( <*> ) f x = bind f (fun f -> bind x (fun x -> return (f x)))
   end)
 
   (* With {! TagTree}, I noticed that the derived applicative library is much more
