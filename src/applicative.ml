@@ -9,6 +9,16 @@ module type S = sig
   include T
 
   val map : ('a -> 'b) -> 'a m -> 'b m
+
+  val ( $ ) : ('a -> 'b) -> 'a m -> 'b m
+  (** Alias for map *)
+
+  val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
+  (** Binding operator for map *)
+
+  val ignore : 'a m -> unit m
+  val ( <* ) : 'a m -> 'b m -> 'a m
+  val ( *> ) : 'a m -> 'b m -> 'b m
   val map2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
   val map3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
 
@@ -20,24 +30,25 @@ module type S = sig
     -> 'd m
     -> 'e m
 
-  val ( $ ) : ('a -> 'b) -> 'a m -> 'b m
-  (** Alias for map *)
-
-  val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
-  (** Binding operator for map *)
+  (** {1 List functions} *)
 
   val sequence : 'a m list -> 'a list m
   val sequence_unit : unit m list -> unit m
   val map_list : ('a -> 'b m) -> 'a list -> 'b list m
   val iter : ('a -> unit m) -> 'a list -> unit m
+
+  (** {1 Option functions} *)
+
   val optional : 'a m option -> 'a option m
   val map_option : ('a -> 'b m) -> 'a option -> 'b option m
-  val ( <* ) : 'a m -> 'b m -> 'a m
-  val ( *> ) : 'a m -> 'b m -> 'b m
-  val ignore : 'a m -> unit m
+
+  (** {1 Boolean function} *)
+
   val onlyif : bool -> unit m -> unit m
   val unless : bool -> unit m -> unit m
   val do_if : bool -> (unit -> unit m) -> unit m
+
+  (** {1 Tuples} *)
 
   module Tuple2 : sig
     val map : ('a -> 'b m) -> ('c -> 'd m) -> 'a * 'c -> ('b * 'd) m
