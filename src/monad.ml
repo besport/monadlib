@@ -1,3 +1,16 @@
+(** The monad library.
+
+  {b Introduction}
+
+  Monads in ocaml, as defined in the batteries library and lwt, are defined
+  narrowly in terms of a type constructor, and two functions, [return] and
+  [bind]. This misses the [i abstraction], which lies in the ability to write
+  functions that apply generally to [i all] monads. This library defines modules
+  for such functions.
+
+  @author Phil Scott
+*)
+
 module type T = BatInterfaces.Monad
 
 module type S = sig
@@ -15,9 +28,7 @@ module type S = sig
   val filter_list : ('a -> bool m) -> 'a list -> 'a list m
 end
 
-module List = BatList
-
-module Make (M : BatInterfaces.Monad) = struct
+module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
   include M
 
   let ( >>= ) = bind
@@ -33,13 +44,16 @@ module Make (M : BatInterfaces.Monad) = struct
     let ( <*> ) f x = map2 (fun f x -> f x) f x
   end)
 
+  (* With {! TagTree}, I noticed that the derived applicative library is much more
+     efficient than the derived monad library. So in the {! Monad}, I have made sure
+     that all of the applicative functions override the monad ones. @author Phil Scott *)
   include (Ap : Applicative.S with type 'a m := 'a m)
 
   let join m = m >>= fun x -> x
 
   let filter_map_list p xs =
-    let> l = sequence @@ List.map p xs in
-    return (List.filter_map BatPervasives.identity l)
+    let> l = sequence @@ BatList.map p xs in
+    return (BatList.filter_map BatPervasives.identity l)
 
   let fold_left f acc l =
     let rec loop acc = function
