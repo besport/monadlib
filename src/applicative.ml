@@ -21,7 +21,11 @@ module type S = sig
     -> 'e m
 
   val ( $ ) : ('a -> 'b) -> 'a m -> 'b m
+  (** Alias for map *)
+
   val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
+  (** Binding operator for map *)
+
   val sequence : 'a m list -> 'a list m
   val sequence_unit : unit m list -> unit m
   val map_list : ('a -> 'b m) -> 'a list -> 'b list m
@@ -55,7 +59,7 @@ module type S = sig
   end
 end
 
-module Make (A : T) = struct
+module Make (A : T) : S with type 'a m = 'a A.m = struct
   include A
 
   let ( $ ) f x = return f <*> x
