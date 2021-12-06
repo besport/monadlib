@@ -44,7 +44,7 @@ module type S = sig
 
   (** {1 Boolean function} *)
 
-  val only_if : bool -> (unit -> unit m) -> unit m
+  val conditional : bool -> (unit -> unit m) -> unit m
 end
 
 module Make (A : T) : S with type 'a m = 'a A.m = struct
@@ -76,7 +76,7 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
 
   let map_option f xs = optional (BatOption.map f xs)
   let ignore m = map (fun _ -> ()) m
-  let only_if b f = if b then f () else return ()
+  let conditional b f = if b then f () else return ()
 end
 
 module Transform (A : T) (Inner : T) = struct
