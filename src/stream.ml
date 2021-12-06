@@ -19,8 +19,8 @@ module type StreamC = sig
 end
 
 module Make (M : sig
-  include LazyPlus.T
-  include Applicative.T with type 'a m := 'a m
+  include Applicative.T
+  include LazyPlus.T with type 'a m := 'a m
 end) =
 struct
   module ML = LazyPlus.Make (M)
@@ -85,16 +85,16 @@ struct
       shift fs
   end
 
-  include LazyPlus.Make (Base)
-  include (Applicative.Make (Base) : Applicative.S with type 'a m := 'a m)
+  include Applicative.Make (Base)
+  include (LazyPlus.Make (Base) : LazyPlus.S with type 'a m := 'a m)
 
   let to_depth n = LazyList.take n
   let rec iterate f xs = plus xs (delay (lazy (Ll.next (iterate f (f xs)))))
 end
 
 module MakeStreamC (M : sig
-  include Collection.T
-  include Applicative.T with type 'a m := 'a m
+  include Applicative.T
+  include Collection.T with type 'a m := 'a m
 end) =
 struct
   include Make (M)

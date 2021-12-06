@@ -75,8 +75,8 @@ end
     be commutative, but don't take my word for it!
  *)
 module Make (M : sig
-  include LazyPlus.T
-  include Applicative.T with type 'a m := 'a m
+  include Applicative.T
+  include LazyPlus.T with type 'a m := 'a m
 end) : sig
   include
     S with type 'a t = 'a M.m LazyList.node_t and type 'a m = 'a M.m LazyList.t
@@ -93,8 +93,8 @@ end
     order that generations appear in the stream). You can enforce this
     constraint by performing, say, a sort on each generation.  *)
 module MakeStreamC (M : sig
-  include Collection.T
-  include Applicative.T with type 'a m := 'a m
+  include Applicative.T
+  include Collection.T with type 'a m := 'a m
 end) : sig
   include
     StreamC
