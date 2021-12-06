@@ -14,6 +14,7 @@
 module type T = BatInterfaces.Monad
 
 module type S = sig
+  module Ap : Applicative.S
   include Applicative.S
   include BatInterfaces.Monad with type 'a m := 'a m
 
@@ -24,10 +25,14 @@ module type S = sig
   val join : 'a m m -> 'a m
 
   (* {1 List functions} *)
-  val fold_left : ('a -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
-  val fold_right : ('a -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
-  val filter_list : ('a -> bool m) -> 'a list -> 'a list m
-  val filter_map_list : ('a -> 'b option m) -> 'a list -> 'b list m
+  (** Note that {! Ap.list_map} is overwritten with {! list_map_s} *)
+
+  val list_map_s : ('a -> 'b m) -> 'a list -> 'b list m
+  val list_map_p : ('a -> 'b m) -> 'a list -> 'b list m
+  val list_fold_left : ('a -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
+  val list_fold_right : ('a -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
+  val list_filter : ('a -> bool m) -> 'a list -> 'a list m
+  val list_filter_map : ('a -> 'b option m) -> 'a list -> 'b list m
 end
 
 module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
@@ -51,25 +56,35 @@ module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
 
   let join m = m >>= fun x -> x
 
-  let fold_left f acc l =
+  let list_map_s f l =
+    let rec inner acc = function
+      | [] -> BatList.rev acc |> return
+      | hd :: tl -> f hd >>= fun r -> (inner [@ocaml.tailcall]) (r :: acc) tl
+    in
+    inner [] l
+
+  let list_map_p = Ap.list_map
+  let list_map = list_map_s
+
+  let list_fold_left f acc l =
     let rec loop acc = function
       | [] -> return acc
       | h :: t -> f acc h >>= fun h' -> loop h' t
     in
     loop acc l
 
-  let fold_right f acc l =
+  let list_fold_right f acc l =
     let rec loop acc = function
       | [] -> return acc
       | h :: t -> loop acc t >>= f h
     in
     loop acc l
 
-  let filter_list p l =
+  let list_filter p l =
     let f acc x = p x >>= fun b -> return @@ if b then x :: acc else acc in
-    fold_left f [] l
+    list_fold_left f [] l
 
-  let filter_map_list p xs =
+  let list_filter_map p xs =
     let> l = sequence @@ BatList.map p xs in
     return (BatList.filter_map BatPervasives.identity l)
 end

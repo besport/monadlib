@@ -34,13 +34,13 @@ module type S = sig
 
   val sequence : 'a m list -> 'a list m
   val sequence_unit : unit m list -> unit m
-  val map_list : ('a -> 'b m) -> 'a list -> 'b list m
-  val iter : ('a -> unit m) -> 'a list -> unit m
+  val list_map : ('a -> 'b m) -> 'a list -> 'b list m
+  val list_iter : ('a -> unit m) -> 'a list -> unit m
 
   (** {1 Option functions} *)
 
   val optional : 'a m option -> 'a option m
-  val map_option : ('a -> 'b m) -> 'a option -> 'b option m
+  val option_map : ('a -> 'b m) -> 'a option -> 'b option m
 
   (** {1 Boolean function} *)
 
@@ -58,6 +58,7 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
   let map4 f x y z w = f $ x <*> y <*> z <*> w
   let ( <* ) x y = map2 (fun x _ -> x) x y
   let ( *> ) x y = map2 (fun _ y -> y) x y
+  let ignore m = map (fun _ -> ()) m
 
   let rec sequence = function
     | [] -> return []
@@ -67,15 +68,14 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
     | [] -> return ()
     | m :: ms -> m *> sequence_unit ms
 
-  let map_list f xs = sequence (BatList.map f xs)
-  let iter f xs = sequence_unit (BatList.map f xs)
+  let list_map f xs = sequence (BatList.map f xs)
+  let list_iter f xs = sequence_unit (BatList.map f xs)
 
   let optional = function
     | None -> return None
     | Some f -> map (fun y -> Some y) f
 
-  let map_option f xs = optional (BatOption.map f xs)
-  let ignore m = map (fun _ -> ()) m
+  let option_map f xs = optional (BatOption.map f xs)
   let conditional b f = if b then f () else return ()
 end
 
