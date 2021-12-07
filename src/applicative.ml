@@ -10,16 +10,25 @@ module type S = sig
 
   val map : ('a -> 'b) -> 'a m -> 'b m
 
-  val ( <@> ) : ('a -> 'b) -> 'a m -> 'b m
-  (** Alias for map *)
+  module Operators : sig
+    val ( <@> ) : ('a -> 'b) -> 'a m -> 'b m
+    (** Alias for map *)
 
-  val ( let+ ) : 'a m -> ('a -> 'b) -> 'b m
-  (** Binding operator for map *)
+    val ( <*> ) : ('a -> 'b) m -> 'a m -> 'b m
+    val ( <* ) : 'a m -> 'b m -> 'a m
+    val ( *> ) : 'a m -> 'b m -> 'b m
+  end
 
-  val ( and+ ) : 'a m -> 'b m -> ('a * 'b) m
+  include module type of Operators
+
+  module Bindings : sig
+    val ( let+ ) : 'a m -> ('a -> 'b) -> 'b m
+    val ( and+ ) : 'a m -> 'b m -> ('a * 'b) m
+  end
+
+  include module type of Bindings
+
   val ignore : 'a m -> unit m
-  val ( <* ) : 'a m -> 'b m -> 'a m
-  val ( *> ) : 'a m -> 'b m -> 'b m
   val map2 : ('a -> 'b -> 'c) -> 'a m -> 'b m -> 'c m
   val map3 : ('a -> 'b -> 'c -> 'd) -> 'a m -> 'b m -> 'c m -> 'd m
 
@@ -53,15 +62,27 @@ end
 module Make (A : T) : S with type 'a m = 'a A.m = struct
   include A
 
-  let ( <@> ) f x = return f <*> x
-  let map = ( <@> )
-  let ( let+ ) x f = f <@> x
-  let ( and+ ) x y = BatTuple.Tuple2.make <@> x <*> y
+  let map f x = return f <*> x
+
+  module Operators = struct
+    let ( <@> ) = map
+    let ( <*> ) = A.( <*> )
+    let ( <* ) x y = BatPervasives.const <@> x <*> y
+    let ( *> ) x y = map (fun _ y -> y) x <*> y
+  end
+
+  include Operators
+
+  module Bindings = struct
+    let ( let+ ) x f = f <@> x
+    let ( and+ ) x y = BatTuple.Tuple2.make <@> x <*> y
+  end
+
+  include Bindings
+
   let map2 f x y = f <@> x <*> y
   let map3 f x y z = f <@> x <*> y <*> z
   let map4 f x y z w = f <@> x <*> y <*> z <*> w
-  let ( <* ) x y = BatPervasives.const <@> x <*> y
-  let ( *> ) x y = map (fun _ y -> y) x <*> y
   let ignore m = map (fun _ -> ()) m
 
   let rec sequence = function

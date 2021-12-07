@@ -18,10 +18,24 @@ module type S = sig
   include Applicative.S
   include BatInterfaces.Monad with type 'a m := 'a m
 
-  val ( >>= ) : 'a m -> ('a -> 'b m) -> 'b m
-  val ( let* ) : 'a m -> ('a -> 'b m) -> 'b m
-  val ( >=> ) : ('a -> 'b m) -> ('b -> 'c m) -> 'a -> 'c m
-  val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
+  module Operators : sig
+    val ( >>= ) : 'a m -> ('a -> 'b m) -> 'b m
+    val ( >=> ) : ('a -> 'b m) -> ('b -> 'c m) -> 'a -> 'c m
+    val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
+
+    include module type of Ap.Operators
+  end
+
+  include module type of Operators
+
+  module Bindings : sig
+    val ( let* ) : 'a m -> ('a -> 'b m) -> 'b m
+
+    include module type of Ap.Bindings
+  end
+
+  include module type of Bindings
+
   val join : 'a m m -> 'a m
 
   (* {1 List functions} *)
@@ -34,21 +48,31 @@ end
 module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
   include M
 
-  let ( >>= ) = bind
-  let ( let* ) = bind
-  let ( >=> ) g f x = g x >>= f
-  let ( <=< ) f g x = g x >>= f
-
   module Ap = Applicative.Make (struct
     include M
 
     let ( <*> ) f x = bind f (fun f -> bind x (fun x -> return (f x)))
   end)
 
-  (* With {! TagTree}, I noticed that the derived applicative library is much more
-     efficient than the derived monad library. So in the {! Monad}, I have made sure
-     that all of the applicative functions override the monad ones. @author Phil Scott *)
   include (Ap : Applicative.S with type 'a m := 'a m)
+
+  module Operators = struct
+    let ( >>= ) = bind
+    let ( >=> ) g f x = g x >>= f
+    let ( <=< ) f g x = g x >>= f
+
+    include Ap.Operators
+  end
+
+  include Operators
+
+  module Bindings = struct
+    let ( let* ) = bind
+
+    include Ap.Bindings
+  end
+
+  include Bindings
 
   let join m = m >>= fun x -> x
 
