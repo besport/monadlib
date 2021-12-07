@@ -27,8 +27,6 @@ module type S = sig
   (* {1 List functions} *)
   (** Note that {! Ap.list_map} is overwritten with {! list_map_s} *)
 
-  val list_map_s : ('a -> 'b m) -> 'a list -> 'b list m
-  val list_map_p : ('a -> 'b m) -> 'a list -> 'b list m
   val list_fold_left : ('a -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
   val list_fold_right : ('a -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
   val list_filter : ('a -> bool m) -> 'a list -> 'a list m
@@ -55,16 +53,6 @@ module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
   include (Ap : Applicative.S with type 'a m := 'a m)
 
   let join m = m >>= fun x -> x
-
-  let list_map_s f l =
-    let rec inner acc = function
-      | [] -> BatList.rev acc |> return
-      | hd :: tl -> f hd >>= fun r -> (inner [@ocaml.tailcall]) (r :: acc) tl
-    in
-    inner [] l
-
-  let list_map_p = Ap.list_map
-  let list_map = list_map_s
 
   let list_fold_left f acc l =
     let rec loop acc = function
