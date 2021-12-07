@@ -9,6 +9,7 @@ module type S = sig
   include T
 
   val map : ('a -> 'b) -> 'a m -> 'b m
+  val iter : ('a -> unit) -> 'a m -> unit
 
   module Operators : sig
     val ( <@> ) : ('a -> 'b) -> 'a m -> 'b m
@@ -72,6 +73,10 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
   end
 
   include Operators
+
+  let iter f x =
+    let _ = map f x in
+    ()
 
   module Bindings = struct
     let ( let+ ) x f = f <@> x
