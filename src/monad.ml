@@ -14,9 +14,9 @@
 module type T = BatInterfaces.Monad
 
 module type S = sig
-  module Ap : Applicative.S
-  include Applicative.S
-  include BatInterfaces.Monad with type 'a m := 'a m
+  include BatInterfaces.Monad
+  module Ap : Applicative.S with type 'a m := 'a m
+  include Applicative.S with type 'a m := 'a m
 
   module Operators : sig
     val ( >>= ) : 'a m -> ('a -> 'b m) -> 'b m
