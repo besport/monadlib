@@ -37,6 +37,8 @@ module type S = sig
   val sequence_unit : unit m list -> unit m
   val list_map : ('a -> 'b m) -> 'a list -> 'b list m
   val list_iter : ('a -> unit m) -> 'a list -> unit m
+  val list_filter : ('a -> bool m) -> 'a list -> 'a list m
+  val list_filter_map : ('a -> 'b option m) -> 'a list -> 'b list m
 
   (** {1 Option functions} *)
 
@@ -58,20 +60,43 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
   let map2 f x y = f $ x <*> y
   let map3 f x y z = f $ x <*> y <*> z
   let map4 f x y z w = f $ x <*> y <*> z <*> w
-  let ( <* ) x y = map2 (fun x _ -> x) x y
-  let ( *> ) x y = map2 (fun _ y -> y) x y
+  let ( <* ) x y = BatPervasives.const $ x <*> y
+  let ( *> ) x y = map (fun _ y -> y) x <*> y
   let ignore m = map (fun _ -> ()) m
 
   let rec sequence = function
     | [] -> return []
-    | m :: ms -> map2 (fun x xs -> x :: xs) m (sequence ms)
+    | m :: ms -> BatList.cons $ m <*> sequence ms
 
   let rec sequence_unit = function
     | [] -> return ()
     | m :: ms -> m *> sequence_unit ms
 
-  let list_map f xs = sequence (BatList.map f xs)
-  let list_iter f xs = sequence_unit (BatList.map f xs)
+  let rec list_map f = function
+    | [] -> return []
+    | h :: t -> BatList.cons $ f h <*> list_map f t
+
+  let rec list_iter f = function
+    | [] -> return ()
+    | h :: t -> f h *> list_iter f t
+
+  let rec list_filter p = function
+    | [] -> return []
+    | h :: t ->
+        let cons = function
+          | false -> BatPervasives.identity
+          | true -> BatList.cons h
+        in
+        cons $ p h <*> list_filter p t
+
+  let rec list_filter_map f = function
+    | [] -> return []
+    | h :: t ->
+        let cons = function
+          | None -> BatPervasives.identity
+          | Some x -> BatList.cons x
+        in
+        cons $ f h <*> list_filter_map f t
 
   let optional = function
     | None -> return None
