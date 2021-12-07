@@ -21,7 +21,7 @@
   stream
   tagTree
   writer)
- (libraries batteries))
+ (libraries batteries.unthreaded))
 
 (env
  (_
