@@ -1,4 +1,8 @@
-module M = MonadPlus.Make (struct
+module type MonadS = Monad.S
+
+module MonadMake = Monad.Make
+
+module Monad = MonadPlus.Make (struct
   type 'a m = 'a list
 
   let return x = [x]
@@ -8,8 +12,8 @@ module M = MonadPlus.Make (struct
   let null = function [] -> true | _ -> false
 end)
 
-module Trans (M : Monad.S) = struct
-  include Monad.Make (struct
+module Trans (M : MonadS) = struct
+  include MonadMake (struct
     type 'a m = 'a list M.m
 
     let return x = M.return [x]

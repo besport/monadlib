@@ -1,12 +1,16 @@
-module M = Monad.Make (struct
+module type MonadS = Monad.S
+
+module MonadMake = Monad.Make
+
+module Monad = Monad.Make (struct
   type 'a m = 'a Stdlib.Lazy.t
 
   let return x = lazy x
   let bind x f = lazy (Stdlib.Lazy.force (f (Stdlib.Lazy.force x)))
 end)
 
-module Trans (M : Monad.S) = struct
-  include Monad.Make (struct
+module Trans (M : MonadS) = struct
+  include MonadMake (struct
     type 'a m = 'a Stdlib.Lazy.t M.m
 
     let return x = M.return (lazy x)

@@ -1,4 +1,8 @@
-module M = MonadPlus.Make (struct
+module type MonadS = Monad.S
+
+module MonadMake = Monad.Make
+
+module Monad = MonadPlus.Make (struct
   include BatOption.Monad
 
   let zero () = None
@@ -9,8 +13,8 @@ module M = MonadPlus.Make (struct
   let null = BatOption.is_none
 end)
 
-module Trans (M : Monad.S) = struct
-  include Monad.Make (struct
+module Trans (M : MonadS) = struct
+  include MonadMake (struct
     type 'a m = 'a option M.m
 
     let return x = M.return (Some x)

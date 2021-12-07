@@ -1,7 +1,9 @@
-module M : MonadPlus.S with type 'a m = 'a option
+module type MonadS = Monad.S
 
-module Trans (M : Monad.S) : sig
-  include Monad.S with type 'a m = 'a option M.m
+module Monad : MonadPlus.S with type 'a m = 'a option
+
+module Trans (M : MonadS) : sig
+  include MonadS with type 'a m = 'a option M.m
 
   val lift : 'a M.m -> 'a m
 end
