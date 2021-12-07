@@ -16,6 +16,7 @@ module type S = sig
   val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
   (** Binding operator for map *)
 
+  val ( and$ ) : 'a m -> 'b m -> ('a * 'b) m
   val ignore : 'a m -> unit m
   val ( <* ) : 'a m -> 'b m -> 'a m
   val ( *> ) : 'a m -> 'b m -> 'b m
@@ -53,6 +54,7 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
   let ( $ ) f x = return f <*> x
   let map = ( $ )
   let ( let$ ) x f = f $ x
+  let ( and$ ) x y = BatTuple.Tuple2.make $ x <*> y
   let map2 f x y = f $ x <*> y
   let map3 f x y z = f $ x <*> y <*> z
   let map4 f x y z w = f $ x <*> y <*> z <*> w
