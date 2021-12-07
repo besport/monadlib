@@ -25,6 +25,7 @@ module type S = sig
 
   include module type of Operators
 
+  val catch : ('a -> 'a m) -> 'a m -> 'a m
   val filter : ('a -> bool) -> 'a m -> 'a m
   val of_list : 'a list -> 'a m
   val sum : 'a list m -> 'a m
@@ -55,6 +56,7 @@ module Make (M : T) : S with type 'a m = 'a M.m = struct
   include Operators
 
   let null = M.null
+  let catch f x = if null x then x >>= f else x
   let filter p xs = xs >>= fun x -> if p x then return x else zero ()
   let of_list xs = BatList.fold_left (fun x y -> plus x (return y)) (zero ()) xs
 
