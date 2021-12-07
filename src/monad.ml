@@ -19,7 +19,7 @@ module type S = sig
   include BatInterfaces.Monad with type 'a m := 'a m
 
   val ( >>= ) : 'a m -> ('a -> 'b m) -> 'b m
-  val ( let> ) : 'a m -> ('a -> 'b m) -> 'b m
+  val ( let* ) : 'a m -> ('a -> 'b m) -> 'b m
   val ( >=> ) : ('a -> 'b m) -> ('b -> 'c m) -> 'a -> 'c m
   val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
   val join : 'a m m -> 'a m
@@ -35,7 +35,7 @@ module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
   include M
 
   let ( >>= ) = bind
-  let ( let> ) = bind
+  let ( let* ) = bind
   let ( >=> ) g f x = g x >>= f
   let ( <=< ) f g x = g x >>= f
 

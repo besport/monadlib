@@ -10,13 +10,13 @@ module type S = sig
 
   val map : ('a -> 'b) -> 'a m -> 'b m
 
-  val ( $ ) : ('a -> 'b) -> 'a m -> 'b m
+  val ( <@> ) : ('a -> 'b) -> 'a m -> 'b m
   (** Alias for map *)
 
-  val ( let$ ) : 'a m -> ('a -> 'b) -> 'b m
+  val ( let+ ) : 'a m -> ('a -> 'b) -> 'b m
   (** Binding operator for map *)
 
-  val ( and$ ) : 'a m -> 'b m -> ('a * 'b) m
+  val ( and+ ) : 'a m -> 'b m -> ('a * 'b) m
   val ignore : 'a m -> unit m
   val ( <* ) : 'a m -> 'b m -> 'a m
   val ( *> ) : 'a m -> 'b m -> 'b m
@@ -53,20 +53,20 @@ end
 module Make (A : T) : S with type 'a m = 'a A.m = struct
   include A
 
-  let ( $ ) f x = return f <*> x
-  let map = ( $ )
-  let ( let$ ) x f = f $ x
-  let ( and$ ) x y = BatTuple.Tuple2.make $ x <*> y
-  let map2 f x y = f $ x <*> y
-  let map3 f x y z = f $ x <*> y <*> z
-  let map4 f x y z w = f $ x <*> y <*> z <*> w
-  let ( <* ) x y = BatPervasives.const $ x <*> y
+  let ( <@> ) f x = return f <*> x
+  let map = ( <@> )
+  let ( let+ ) x f = f <@> x
+  let ( and+ ) x y = BatTuple.Tuple2.make <@> x <*> y
+  let map2 f x y = f <@> x <*> y
+  let map3 f x y z = f <@> x <*> y <*> z
+  let map4 f x y z w = f <@> x <*> y <*> z <*> w
+  let ( <* ) x y = BatPervasives.const <@> x <*> y
   let ( *> ) x y = map (fun _ y -> y) x <*> y
   let ignore m = map (fun _ -> ()) m
 
   let rec sequence = function
     | [] -> return []
-    | m :: ms -> BatList.cons $ m <*> sequence ms
+    | m :: ms -> BatList.cons <@> m <*> sequence ms
 
   let rec sequence_unit = function
     | [] -> return ()
@@ -74,7 +74,7 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
 
   let rec list_map f = function
     | [] -> return []
-    | h :: t -> BatList.cons $ f h <*> list_map f t
+    | h :: t -> BatList.cons <@> f h <*> list_map f t
 
   let rec list_iter f = function
     | [] -> return ()
@@ -87,7 +87,7 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
           | false -> BatPervasives.identity
           | true -> BatList.cons h
         in
-        cons $ p h <*> list_filter p t
+        cons <@> p h <*> list_filter p t
 
   let rec list_filter_map f = function
     | [] -> return []
@@ -96,7 +96,7 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
           | None -> BatPervasives.identity
           | Some x -> BatList.cons x
         in
-        cons $ f h <*> list_filter_map f t
+        cons <@> f h <*> list_filter_map f t
 
   let optional = function
     | None -> return None

@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "monadlib"
-version: "1.0.1"
+version: "1.0.2"
 maintainer: "phil.scott@ed.ac.uk"
 homepage: "https://github.com/Chattered/ocaml-monad"
 dev-repo: "git+https://github.com/Chattered/ocaml-monad.git"
