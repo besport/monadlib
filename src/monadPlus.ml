@@ -30,10 +30,16 @@ module type S = sig
   val of_list : 'a list -> 'a m
   val sum : 'a list m -> 'a m
   val msum : 'a m list -> 'a m
+
+  (** {1 Boolean functions} *)
+
   val guard : bool -> unit m
+  val only_if : bool -> (unit -> 'a m) -> 'a m
 
   val conditional : bool -> (unit -> 'a m) -> 'a m
   (** overwrites {! Applicative.conditional} with a more general type. *)
+
+  (** {1 Miscellaneous} *)
 
   val transpose : 'a list m -> 'a m list
   (** Generalises matrix transposition. This will loop infinitely if
@@ -65,7 +71,8 @@ module Make (M : T) : S with type 'a m = 'a M.m = struct
 
   let msum xs = BatList.fold_left plus (zero ()) xs
   let guard b = if b then return () else zero ()
-  let conditional p f = if p then f () else zero ()
+  let conditional p f = guard p >>= f
+  let only_if b f = if b then f () else zero ()
 
   let rec transpose xs =
     let hds = sum (map (BatList.take 1) xs) in
