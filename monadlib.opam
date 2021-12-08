@@ -1,11 +1,11 @@
 opam-version: "2.0"
 name: "monadlib"
-version: "1.0.6"
-maintainer: "phil.scott@ed.ac.uk"
-homepage: "https://github.com/Chattered/ocaml-monad"
-dev-repo: "git+https://github.com/Chattered/ocaml-monad.git"
-bug-reports: "https://github.com/Chattered/ocaml-monad/issues"
-authors: ["Phil Scott"]
+version: "1.0.7"
+maintainer: "dev@besport.com"
+homepage: "https://github.com/besport/monadlib"
+dev-repo: "git+https://github.com/besport/monadlib.git"
+bug-reports: "https://github.com/besport/monadlib/issues"
+authors: ["Phil Scott" "Jan Rochel"]
 build: [
   ["dune" "build" "-p" name "-j" jobs]
 ]
