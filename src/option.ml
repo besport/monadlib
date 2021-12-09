@@ -1,6 +1,27 @@
-module type MonadS = Monad.S
+module Trans (M : Monad.S) = struct
+  include Monad.Make (struct
+    type 'a m = 'a option M.m
 
-module MonadMake = Monad.Make
+    let return x = M.return (Some x)
+    let bind xs f = M.bind xs (function None -> M.return None | Some x -> f x)
+  end)
+
+  let lift x = M.map (fun x -> Some x) x
+end
+
+module TransPlus (M : MonadPlus.S) = struct
+  include MonadPlus.Make (struct
+    type 'a m = 'a option M.m
+
+    let return x = M.return (Some x)
+    let bind xs f = M.bind xs (function None -> M.return None | Some x -> f x)
+    let zero = M.zero
+    let plus = M.plus
+    let null = M.null
+  end)
+
+  let lift x = M.map (fun x -> Some x) x
+end
 
 module Monad = MonadPlus.Make (struct
   include BatOption.Monad
@@ -12,14 +33,3 @@ module Monad = MonadPlus.Make (struct
 
   let null = BatOption.is_none
 end)
-
-module Trans (M : MonadS) = struct
-  include MonadMake (struct
-    type 'a m = 'a option M.m
-
-    let return x = M.return (Some x)
-    let bind xs f = M.bind xs (function None -> M.return None | Some x -> f x)
-  end)
-
-  let lift x = M.map (fun x -> Some x) x
-end
