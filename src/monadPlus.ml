@@ -34,7 +34,7 @@ module type S = sig
   (** {1 Boolean functions} *)
 
   val guard : bool -> unit m
-  val only_if : bool -> (unit -> 'a m) -> 'a m
+  val only_if : bool -> (unit -> 'a) -> 'a m
 
   val conditional : bool -> (unit -> 'a m) -> 'a m
   (** overwrites {! Applicative.conditional} with a more general type. *)
@@ -71,8 +71,8 @@ module Make (M : T) : S with type 'a m = 'a M.m = struct
 
   let msum xs = BatList.fold_left plus (zero ()) xs
   let guard b = if b then return () else zero ()
-  let conditional p f = guard p >>= f
-  let only_if b f = if b then f () else zero ()
+  let only_if b f = if b then return @@ f () else zero ()
+  let conditional p f = if p then f () else zero ()
 
   let rec transpose xs =
     let hds = sum (map (BatList.take 1) xs) in
