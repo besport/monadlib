@@ -53,12 +53,12 @@ module type S = sig
 
   (** {1 Option functions} *)
 
-  val optional : (unit -> 'a m) option -> 'a option m
   val option_map : ('a -> 'b m) -> 'a option -> 'b option m
   val optionally : ('a -> unit m) -> 'a option -> unit m
 
   (** {1 Boolean function} *)
 
+  val optional : bool -> (unit -> 'a m) -> 'a option m
   val conditional : bool -> (unit -> unit m) -> unit m
 end
 
@@ -130,15 +130,12 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
 
   let optionally f = function None -> return () | Some x -> f x
 
-  let optional = function
-    | None -> return None
-    | Some f -> map (fun y -> Some y) (f ())
-
   let option_map f = function
     | None -> return None
     | Some x -> map (fun y -> Some y) (f x)
 
   let conditional b f = if b then f () else return ()
+  let optional b f = if b then BatOption.some <@> f () else return None
 end
 
 module Transform (A : T) (Inner : T) = struct
