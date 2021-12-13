@@ -12,7 +12,7 @@ module type S = sig
   val fmap : ('a -> 'b) m -> 'a -> 'b m
   val iter : ('a -> unit) -> 'a m -> unit
 
-  module Operators : sig
+  module Infix : sig
     val ( <@> ) : ('a -> 'b) -> 'a m -> 'b m
     (** Alias for map *)
 
@@ -21,7 +21,7 @@ module type S = sig
     val ( *> ) : 'a m -> 'b m -> 'b m
   end
 
-  include module type of Operators
+  include module type of Infix
 
   module Bindings : sig
     val ( let+ ) : 'a m -> ('a -> 'b) -> 'b m
@@ -67,14 +67,14 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
 
   let map f x = return f <*> x
 
-  module Operators = struct
+  module Infix = struct
     let ( <@> ) = map
     let ( <*> ) = A.( <*> )
     let ( <* ) x y = BatPervasives.const <@> x <*> y
     let ( *> ) x y = map (fun _ y -> y) x <*> y
   end
 
-  include Operators
+  include Infix
 
   let iter f x =
     let _ = map f x in

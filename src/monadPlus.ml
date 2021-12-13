@@ -16,14 +16,14 @@ module type S = sig
   include T
   include Monad.S with type 'a m := 'a m
 
-  module Operators : sig
+  module Infix : sig
     val ( ++ ) : 'a m -> 'a m -> 'a m
     val ( +? ) : 'a m option -> 'a m -> 'a m
 
-    include module type of Operators
+    include module type of Infix
   end
 
-  include module type of Operators
+  include module type of Infix
 
   val catch : ('a -> 'a m) -> 'a m -> 'a m
   val filter : ('a -> bool) -> 'a m -> 'a m
@@ -57,14 +57,14 @@ module Make (M : T) : S with type 'a m = 'a M.m = struct
   let zero () = M.zero ()
   let plus = M.plus
 
-  module Operators = struct
+  module Infix = struct
     let ( ++ ) = M.plus
     let ( +? ) x y = match x with None -> y | Some x -> x ++ y
 
-    include Operators
+    include Infix
   end
 
-  include Operators
+  include Infix
 
   let null = M.null
   let catch f x = if null x then x >>= f else x

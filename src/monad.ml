@@ -18,15 +18,15 @@ module type S = sig
   module Ap : Applicative.S with type 'a m := 'a m
   include Applicative.S with type 'a m := 'a m
 
-  module Operators : sig
+  module Infix : sig
     val ( >>= ) : 'a m -> ('a -> 'b m) -> 'b m
     val ( >=> ) : ('a -> 'b m) -> ('b -> 'c m) -> 'a -> 'c m
     val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
 
-    include module type of Ap.Operators
+    include module type of Ap.Infix
   end
 
-  include module type of Operators
+  include module type of Infix
 
   module Bindings : sig
     val ( let* ) : 'a m -> ('a -> 'b m) -> 'b m
@@ -56,15 +56,15 @@ module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
 
   include (Ap : Applicative.S with type 'a m := 'a m)
 
-  module Operators = struct
+  module Infix = struct
     let ( >>= ) = bind
     let ( >=> ) g f x = g x >>= f
     let ( <=< ) f g x = g x >>= f
 
-    include Ap.Operators
+    include Ap.Infix
   end
 
-  include Operators
+  include Infix
 
   module Bindings = struct
     let ( let* ) = bind
