@@ -44,8 +44,8 @@ module type S = sig
 
   (** {1 List functions} *)
 
-  val sequence : 'a m list -> 'a list m
-  val sequence_unit : unit m list -> unit m
+  val sequence : (unit -> 'a m) list -> 'a list m
+  val sequence_unit : (unit -> unit m) list -> unit m
   val list_map : ('a -> 'b m) -> 'a list -> 'b list m
   val list_iter : ('a -> unit m) -> 'a list -> unit m
   val list_filter : ('a -> bool m) -> 'a list -> 'a list m
@@ -53,9 +53,9 @@ module type S = sig
 
   (** {1 Option functions} *)
 
-  val optional : 'a m option -> 'a option m
-  val optionally : ('a -> unit m) -> 'a option -> unit m
+  val optional : (unit -> 'a m) option -> 'a option m
   val option_map : ('a -> 'b m) -> 'a option -> 'b option m
+  val optionally : ('a -> unit m) -> 'a option -> unit m
 
   (** {1 Boolean function} *)
 
@@ -96,11 +96,11 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
 
   let rec sequence = function
     | [] -> return []
-    | m :: ms -> BatList.cons <@> m <*> sequence ms
+    | h :: t -> BatList.cons <@> h () <*> sequence t
 
   let rec sequence_unit = function
     | [] -> return ()
-    | m :: ms -> m *> sequence_unit ms
+    | m :: ms -> m () *> sequence_unit ms
 
   let rec list_map f = function
     | [] -> return []
@@ -128,12 +128,16 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
         in
         cons <@> f h <*> list_filter_map f t
 
+  let optionally f = function None -> return () | Some x -> f x
+
   let optional = function
     | None -> return None
-    | Some f -> map (fun y -> Some y) f
+    | Some f -> map (fun y -> Some y) (f ())
 
-  let optionally f = function None -> return () | Some x -> f x
-  let option_map f x = optional (BatOption.map f x)
+  let option_map f = function
+    | None -> return None
+    | Some x -> map (fun y -> Some y) (f x)
+
   let conditional b f = if b then f () else return ()
 end
 

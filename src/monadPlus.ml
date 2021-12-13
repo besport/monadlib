@@ -37,12 +37,12 @@ module type S = sig
   val only_if : bool -> (unit -> 'a) -> 'a m
 
   val optionally : ('a -> 'b m) -> 'a option -> 'b m
-  (** overwrites {! Applicative.optionally} with a more general type. *)
-  (** ATTENTION: changes semantics; {None} maps to {zero ()}, not {return ()}! *)
+  (** overwrites {! Applicative.optionally} with a more general type.
+      ATTENTION: changes semantics; {None} maps to {zero ()}, not {return ()}! *)
 
   val conditional : bool -> (unit -> 'a m) -> 'a m
-  (** overwrites {! Applicative.conditional} with a more general type. *)
-  (** ATTENTION: changes semantics; {false} maps to {zero ()}, not {return ()}! *)
+  (** overwrites {! Applicative.conditional} with a more general type.
+      ATTENTION: changes semantics; {false} maps to {zero ()}, not {return ()}! *)
 
   (** {1 Miscellaneous} *)
 
