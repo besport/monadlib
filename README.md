@@ -4,7 +4,7 @@ monadlib
 Description
 -----------
 
-A starter monad library in Ocaml. Monad library functions are generated from implementations of BatInterfaces.Monad. Generated documentation can be found at: https://besport.github.io/monadlib/monadlib/Monadlib/index.html
+A starter monad library in Ocaml. Monad library functions are generated from implementations of BatInterfaces.Monad. Generated documentation can be found at: https://besport.github.io/monadlib/monadlib/index.html
 
 We support monads with the additional "plus" structure, and provide a lazy variant useful for monads such as LazyList.
 Applicative functors (« functor » not in the OCaml-sense of parametrised module) are provided.

@@ -1,3 +1,8 @@
+(** {{:https://en.wikipedia.org/wiki/Applicative_functor}Applicative functors} are data structures over one can map a function.
+
+    From a specification {!T} which defines {return} (how to package a value into your functor) and {<*>} (how to apply a function in your functor) {!Make} generates a module of type {!S} which provides a number of useful functions.
+*)
+
 module type T = sig
   type 'a m
 
@@ -138,11 +143,12 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
   let optional b f = if b then BatOption.some <@> f () else return None
 end
 
-module Transform (A : T) (Inner : T) = struct
+module Trans (A : S) (Inner : S) : S with type 'a m = 'a Inner.m A.m =
+Make (struct
   module A = Make (A)
 
   type 'a m = 'a Inner.m A.m
 
   let return x = A.return (Inner.return x)
   let ( <*> ) f x = A.map2 Inner.( <*> ) f x
-end
+end)

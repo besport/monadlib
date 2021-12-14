@@ -1,0 +1,14 @@
+{!Monadlib} is a library around {{:https://en.wikipedia.org/wiki/Applicative_functor} applicative functors}, {{:https://en.wikipedia.org/wiki/Monad_(functional_programming)}monads}, and {{:https://en.wikipedia.org/wiki/Monad_transformer}monad transformers}. Here, « functor » does not refer to parametrised modules (in the OCaml sense) but to mappable structures (in the Haskell sense).
+
+The three main abstractions of this library are:
+- {!Monadlib.Applicative}: {{:https://en.wikipedia.org/wiki/Applicative_functor} applicative functors} are data structures over one can map a function.
+- {!Monadlib.Monad}: some applicative functors are also {{:https://en.wikipedia.org/wiki/Monad_(functional_programming)}monads}. Monads are richer than applicative functors in that one can not only map but also fold over monads.
+- {!Monadlib.MonadPlus}:  {{:https://en.wikipedia.org/wiki/Monad_(functional_programming)#Additive_monads}additive monads} are monads together with an additive operator and a neutral element.
+
+Each of the above modules provides a functor (in the OCaml sense) {Make} that generates from a specification {T} a module of type {S} which defines a number of useful functions. This library defines also a number of instantiations of the above abstractions for some standard types. Some of these instantiations include also a functor {Trans} which defines a {{:https://en.wikipedia.org/wiki/Monad_transformer}monad transformer}, that is a functor that transforms any given monad into a composed monad, one monad encapsulated in another.
+
+Some of these instantiations are:
+- {!Monadlib.Option}: the type {'a option} is an additive monad. Defines a transformer {{!Monadlib.Option.Trans}Trans} as well as a transformer {{!Monadlib.Option.TransPlus}TransPlus} for generating additive monads.
+- {!Monadlib.List}: lists are also monads
+- {!Monadlib.Identity}: the identity monad is the monad that does not do anything. It has the limited use of generating from a monad transformer a simple monad: {Monadlib.Option.Trans (Identity)} is (largly) equivalent to {Monadlib.Option.Monad}.
+- for more instances others see: {!Monadlib}

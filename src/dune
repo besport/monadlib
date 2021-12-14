@@ -23,6 +23,10 @@
   writer)
  (libraries batteries.unthreaded))
 
+(documentation
+  (package monadlib)
+  (mld_files index))
+
 (env
  (_
   (flags
