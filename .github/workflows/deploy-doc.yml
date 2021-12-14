@@ -16,6 +16,8 @@ jobs:
         uses: ocaml/setup-ocaml@v2
         with:
           ocaml-compiler: 4.12.x
+          opam-pin: false
+          opam-depext: false
           dune-cache: true
 
       - name: Deploy odoc to GitHub Pages
