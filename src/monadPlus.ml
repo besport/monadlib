@@ -28,6 +28,14 @@ module type S = sig
   val catch : ('a -> 'a m) -> 'a m -> 'a m
   val filter : ('a -> bool) -> 'a m -> 'a m
 
+  (** {1 Option functions} *)
+
+  val of_option : 'a option -> 'a m
+
+  val optionally : ('a -> 'b m) -> 'a option -> 'b m
+  (** overwrites {! Applicative.optionally} with a more general type.
+      ATTENTION: changes semantics; {None} maps to {zero ()}, not {return ()}! *)
+
   (* {1 List functions} *)
 
   val of_list : 'a list -> 'a m
@@ -38,10 +46,6 @@ module type S = sig
 
   val guard : bool -> unit m
   val only_if : bool -> (unit -> 'a) -> 'a m
-
-  val optionally : ('a -> 'b m) -> 'a option -> 'b m
-  (** overwrites {! Applicative.optionally} with a more general type.
-      ATTENTION: changes semantics; {None} maps to {zero ()}, not {return ()}! *)
 
   val conditional : bool -> (unit -> 'a m) -> 'a m
   (** overwrites {! Applicative.conditional} with a more general type.
@@ -72,6 +76,8 @@ module Make (M : T) : S with type 'a m = 'a M.m = struct
   let null = M.null
   let catch f x = if null x then x >>= f else x
   let filter p xs = xs >>= fun x -> if p x then return x else zero ()
+  let of_option = function None -> zero () | Some x -> return x
+  let optionally f = function None -> zero () | Some x -> f x
   let of_list xs = BatList.fold_left (fun x y -> plus x (return y)) (zero ()) xs
 
   let sum xs =
@@ -80,7 +86,6 @@ module Make (M : T) : S with type 'a m = 'a M.m = struct
   let msum xs = BatList.fold_left plus (zero ()) xs
   let guard b = if b then return () else zero ()
   let only_if b f = if b then return @@ f () else zero ()
-  let optionally f = function None -> zero () | Some x -> f x
   let conditional p f = if p then f () else zero ()
 
   let rec transpose xs =
