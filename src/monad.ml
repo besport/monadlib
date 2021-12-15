@@ -39,7 +39,6 @@ module type S = sig
   val join : 'a m m -> 'a m
 
   (* {1 List functions} *)
-  (** Note that {! Ap.list_map} is overwritten with {! list_map_s} *)
 
   val list_fold_left : ('a -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
   val list_fold_right : ('a -> 'b -> 'b m) -> 'b -> 'a list -> 'b m

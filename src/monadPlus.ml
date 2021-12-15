@@ -27,6 +27,9 @@ module type S = sig
 
   val catch : ('a -> 'a m) -> 'a m -> 'a m
   val filter : ('a -> bool) -> 'a m -> 'a m
+
+  (* {1 List functions} *)
+
   val of_list : 'a list -> 'a m
   val sum : 'a list m -> 'a m
   val msum : 'a m list -> 'a m
