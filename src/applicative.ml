@@ -65,6 +65,10 @@ module type S = sig
 
   val optional : bool -> (unit -> 'a m) -> 'a option m
   val conditional : bool -> (unit -> unit m) -> unit m
+
+  (** {1 Tuple functions *)
+
+  val split : ('a * 'b) m -> 'a m * 'b m
 end
 
 module Make (A : T) : S with type 'a m = 'a A.m = struct
@@ -141,6 +145,7 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
 
   let conditional b f = if b then f () else return ()
   let optional b f = if b then BatOption.some <@> f () else return None
+  let split x = map fst x, map snd x
 end
 
 module Trans (A : S) (Inner : S) : S with type 'a m = 'a Inner.m A.m =
