@@ -20,8 +20,13 @@ module type S = sig
 
   module Infix : sig
     val ( >>= ) : 'a m -> ('a -> 'b m) -> 'b m
+    (** an operator for [bind]; The monadic [bind] operator passes the result of a monadic computation to the next monadic computation. *)
+
     val ( >=> ) : ('a -> 'b m) -> ('b -> 'c m) -> 'a -> 'c m
+    (** a monadic function composition; [f >=> g] applies [f] to some argument and then [g] to the resulting value. *)
+
     val ( <=< ) : ('b -> 'c m) -> ('a -> 'b m) -> 'a -> 'c m
+    (** a monadic function composition; [g <=< f] applies [f] to some argument and then [g] to the resulting value. *)
 
     include module type of Ap.Infix
   end
@@ -30,6 +35,7 @@ module type S = sig
 
   module Bindings : sig
     val ( let* ) : 'a m -> ('a -> 'b m) -> 'b m
+    (** a binding operator for the monadic [bind]. [let* y = x in f y] corresponds to [bind x f]. *)
 
     include module type of Ap.Bindings
   end
@@ -41,7 +47,10 @@ module type S = sig
   (* {1 List functions} *)
 
   val list_fold_left : ('a -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
+  (** like [List.fold_left] but for monadic functions *)
+
   val list_fold_right : ('a -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
+  (** like [List.fold_right] but for monadic functions *)
 end
 
 module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m
