@@ -18,7 +18,7 @@ module type S = sig
 
   module Infix : sig
     val ( ++ ) : 'a m -> 'a m -> 'a m
-    val ( +? ) : 'a m option -> 'a m -> 'a m
+    val ( +? ) : 'a option -> 'a m -> 'a m
 
     include module type of Infix
   end
@@ -66,7 +66,7 @@ module Make (M : T) : S with type 'a m = 'a M.m = struct
 
   module Infix = struct
     let ( ++ ) = M.plus
-    let ( +? ) x y = match x with None -> y | Some x -> x ++ y
+    let ( +? ) x y = match x with None -> y | Some x -> return x ++ y
 
     include Infix
   end
