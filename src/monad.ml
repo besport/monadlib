@@ -41,7 +41,9 @@ module type S = sig
   (* {1 List functions} *)
 
   val list_fold_left : ('a -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
+  val list_fold_lefti : ('a -> int -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
   val list_fold_right : ('a -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
+  val list_fold_righti : ('a -> int -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
 end
 
 module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
@@ -75,17 +77,28 @@ module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
 
   let join m = m >>= fun x -> x
 
-  let list_fold_left f acc l =
+  let list_fold_left f init l =
     let rec loop acc = function
       | [] -> return acc
-      | h :: t -> f acc h >>= fun h' -> loop h' t
+      | h :: t -> f acc h >>= fun acc' -> loop acc' t
     in
-    loop acc l
+    loop init l
 
-  let list_fold_right f acc l =
+  let list_fold_lefti f init l =
+    let rec loop i acc = function
+      | [] -> return acc
+      | h :: t -> f acc i h >>= fun acc' -> loop (i + 1) acc' t
+    in
+    loop 0 init l
+
+  let list_fold_right f init l =
     let rec loop acc = function
       | [] -> return acc
       | h :: t -> loop acc t >>= f h
     in
-    loop acc l
+    loop init l
+
+  let list_fold_righti f init l =
+    let li_inv = BatList.fold_lefti (fun acc i x -> (i, x) :: acc) [] l in
+    list_fold_left (fun acc (i, x) -> f x i acc) init li_inv
 end

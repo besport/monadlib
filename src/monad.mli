@@ -49,8 +49,14 @@ module type S = sig
   val list_fold_left : ('a -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
   (** like [List.fold_left] but for monadic functions *)
 
+  val list_fold_lefti : ('a -> int -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
+  (** like [List.fold_lefti] but for monadic functions *)
+
   val list_fold_right : ('a -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
   (** like [List.fold_right] but for monadic functions *)
+
+  val list_fold_righti : ('a -> int -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
+  (** like [List.fold_righti] but for monadic functions *)
 end
 
 module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m
