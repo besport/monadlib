@@ -1,4 +1,4 @@
-module Identity : Monad.S with type 'a m = 'a = Monad.Make (struct
+module Monad : Monad.S with type 'a m = 'a = Monad.Make (struct
   type 'a m = 'a
 
   let return x = x
