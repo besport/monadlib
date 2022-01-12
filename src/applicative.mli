@@ -22,6 +22,9 @@ module type S = sig
   val iter : ('a -> unit) -> 'a m -> unit
   (** [iter f x] applies a pure function [f] to a monadic value [x] and discards the result. *)
 
+  val fiter : ('a -> unit) m -> 'a -> unit
+  (** [iter f x] applies a monadic function [f] to a pure value [x] and discards the result. *)
+
   module Infix : sig
     val ( <@> ) : ('a -> 'b) -> 'a m -> 'b m
     (** Alias for [map]. [f <@> x] applies a pure function [f] to a monadic value [x]. *)

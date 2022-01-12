@@ -11,6 +11,7 @@ module type S = sig
   val map : ('a -> 'b) -> 'a m -> 'b m
   val fmap : ('a -> 'b) m -> 'a -> 'b m
   val iter : ('a -> unit) -> 'a m -> unit
+  val fiter : ('a -> unit) m -> 'a -> unit
 
   module Infix : sig
     val ( <@> ) : ('a -> 'b) -> 'a m -> 'b m
@@ -67,11 +68,9 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
 
   include Infix
 
-  let iter f x =
-    let _ = map f x in
-    ()
-
+  let iter f x = ignore @@ map f x
   let fmap f x = map (fun f -> f x) f
+  let fiter f x = ignore @@ fmap f x
 
   module Bindings = struct
     let ( let+ ) x f = f <@> x
