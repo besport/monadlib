@@ -51,7 +51,17 @@ module type S = sig
   val optionally : ('a -> unit m) -> 'a option -> unit m
   val optional : bool -> (unit -> 'a m) -> 'a option m
   val conditional : bool -> (unit -> unit m) -> unit m
-  val split : ('a * 'b) m -> 'a m * 'b m
+
+  module Tuple2 : sig
+    val split : ('a * 'b) m -> 'a m * 'b m
+    val make1 : 'a m -> 'b -> ('a * 'b) m
+    val make2 : 'a -> 'b m -> ('a * 'b) m
+    val map1 : ('a -> 'c) -> ('a * 'b) m -> ('c * 'b) m
+    val map2 : ('b -> 'c) -> ('a * 'b) m -> ('a * 'c) m
+    val curry1 : ('a * 'b -> 'c) -> 'a m -> 'b -> 'c m
+    val curry2 : ('a * 'b -> 'c) -> 'a -> 'b m -> 'c m
+    val uncurry : ('a -> 'b -> 'c) -> ('a * 'b) m -> 'c m
+  end
 end
 
 module Make (A : T) : S with type 'a m = 'a A.m = struct
@@ -126,7 +136,19 @@ module Make (A : T) : S with type 'a m = 'a A.m = struct
 
   let conditional b f = if b then f () else return ()
   let optional b f = if b then BatOption.some <@> f () else return None
-  let split x = map fst x, map snd x
+
+  module Tuple2 = struct
+    module Tuple2 = BatTuple.Tuple2
+
+    let split m = map fst m, map snd m
+    let make1 m b = map (fun a -> Tuple2.make a b) m
+    let make2 a m = map (fun b -> Tuple2.make a b) m
+    let map1 f = map (Tuple2.map1 f)
+    let map2 f = map (Tuple2.map2 f)
+    let curry1 f m b = map f (make1 m b)
+    let curry2 f a m = map f (make2 a m)
+    let uncurry f = map (Tuple2.uncurry f)
+  end
 end
 
 module Trans (A : S) (Inner : S) : S with type 'a m = 'a Inner.m A.m =

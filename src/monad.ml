@@ -44,6 +44,14 @@ module type S = sig
   val list_fold_lefti : ('a -> int -> 'b -> 'a m) -> 'a -> 'b list -> 'a m
   val list_fold_right : ('a -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
   val list_fold_righti : ('a -> int -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
+
+  module Tuple2 : sig
+    include module type of Ap.Tuple2
+
+    val join : 'a m * 'b m -> ('a * 'b) m
+    val bind1 : ('a * 'b) m -> ('a -> 'c m) -> ('c * 'b) m
+    val bind2 : ('a * 'b) m -> ('b -> 'c m) -> ('a * 'c) m
+  end
 end
 
 module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
@@ -101,4 +109,16 @@ module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
   let list_fold_righti f init l =
     let li_inv = BatList.fold_lefti (fun acc i x -> (i, x) :: acc) [] l in
     list_fold_left (fun acc (i, x) -> f x i acc) init li_inv
+
+  module Tuple2 = struct
+    include Ap.Tuple2
+    module Tuple2 = BatTuple.Tuple2
+
+    let join (ma, mb) =
+      ma >>= fun a ->
+      mb >>= fun b -> return (Tuple2.make a b)
+
+    let bind1 m f = m >>= fun (a, b) -> make1 (f a) b
+    let bind2 m f = m >>= fun (a, b) -> make2 a (f b)
+  end
 end

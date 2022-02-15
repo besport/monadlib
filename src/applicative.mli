@@ -106,7 +106,16 @@ module type S = sig
 
   (** {1 Tuple functions *)
 
-  val split : ('a * 'b) m -> 'a m * 'b m
+  module Tuple2 : sig
+    val split : ('a * 'b) m -> 'a m * 'b m
+    val make1 : 'a m -> 'b -> ('a * 'b) m
+    val make2 : 'a -> 'b m -> ('a * 'b) m
+    val map1 : ('a -> 'c) -> ('a * 'b) m -> ('c * 'b) m
+    val map2 : ('b -> 'c) -> ('a * 'b) m -> ('a * 'c) m
+    val curry1 : ('a * 'b -> 'c) -> 'a m -> 'b -> 'c m
+    val curry2 : ('a * 'b -> 'c) -> 'a -> 'b m -> 'c m
+    val uncurry : ('a -> 'b -> 'c) -> ('a * 'b) m -> 'c m
+  end
 end
 
 module Make (A : T) : S with type 'a m = 'a A.m

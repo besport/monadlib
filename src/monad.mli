@@ -57,6 +57,14 @@ module type S = sig
 
   val list_fold_righti : ('a -> int -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
   (** like [List.fold_righti] but for monadic functions *)
+
+  module Tuple2 : sig
+    include module type of Ap.Tuple2
+
+    val join : 'a m * 'b m -> ('a * 'b) m
+    val bind1 : ('a * 'b) m -> ('a -> 'c m) -> ('c * 'b) m
+    val bind2 : ('a * 'b) m -> ('b -> 'c m) -> ('a * 'c) m
+  end
 end
 
 module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m
