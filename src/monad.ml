@@ -52,6 +52,56 @@ module type S = sig
     val bind1 : ('a * 'b) m -> ('a -> 'c m) -> ('c * 'b) m
     val bind2 : ('a * 'b) m -> ('b -> 'c m) -> ('a * 'c) m
   end
+
+  module Tuple3 : sig
+    include module type of Ap.Tuple3
+
+    val join : 'a m * 'b m * 'c m -> ('a * 'b * 'c) m
+    val bind1 : ('a * 'b * 'c) m -> ('a -> 'd m) -> ('d * 'b * 'c) m
+    val bind2 : ('a * 'b * 'c) m -> ('b -> 'd m) -> ('a * 'd * 'c) m
+    val bind3 : ('a * 'b * 'c) m -> ('c -> 'd m) -> ('a * 'b * 'd) m
+  end
+
+  module Tuple4 : sig
+    include module type of Ap.Tuple4
+
+    val join : 'a m * 'b m * 'c m * 'd m -> ('a * 'b * 'c * 'd) m
+    val bind1 : ('a * 'b * 'c * 'd) m -> ('a -> 'e m) -> ('e * 'b * 'c * 'd) m
+    val bind2 : ('a * 'b * 'c * 'd) m -> ('b -> 'e m) -> ('a * 'e * 'c * 'd) m
+    val bind3 : ('a * 'b * 'c * 'd) m -> ('c -> 'e m) -> ('a * 'b * 'e * 'd) m
+    val bind4 : ('a * 'b * 'c * 'd) m -> ('d -> 'e m) -> ('a * 'b * 'c * 'e) m
+  end
+
+  module Tuple5 : sig
+    include module type of Ap.Tuple5
+
+    val join : 'a m * 'b m * 'c m * 'd m * 'e m -> ('a * 'b * 'c * 'd * 'e) m
+
+    val bind1
+      :  ('a * 'b * 'c * 'd * 'e) m
+      -> ('a -> 'f m)
+      -> ('f * 'b * 'c * 'd * 'e) m
+
+    val bind2
+      :  ('a * 'b * 'c * 'd * 'e) m
+      -> ('b -> 'f m)
+      -> ('a * 'f * 'c * 'd * 'e) m
+
+    val bind3
+      :  ('a * 'b * 'c * 'd * 'e) m
+      -> ('c -> 'f m)
+      -> ('a * 'b * 'f * 'd * 'e) m
+
+    val bind4
+      :  ('a * 'b * 'c * 'd * 'e) m
+      -> ('d -> 'f m)
+      -> ('a * 'b * 'c * 'f * 'e) m
+
+    val bind5
+      :  ('a * 'b * 'c * 'd * 'e) m
+      -> ('e -> 'f m)
+      -> ('a * 'b * 'c * 'd * 'f) m
+  end
 end
 
 module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
@@ -120,5 +170,53 @@ module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m = struct
 
     let bind1 m f = m >>= fun (a, b) -> make1 (f a) b
     let bind2 m f = m >>= fun (a, b) -> make2 a (f b)
+  end
+
+  module Tuple3 = struct
+    include Ap.Tuple3
+    module Tuple3 = BatTuple.Tuple3
+
+    let join (ma, mb, mc) =
+      ma >>= fun a ->
+      mb >>= fun b ->
+      mc >>= fun c -> return (Tuple3.make a b c)
+
+    let bind1 m f = m >>= fun (a, b, c) -> make1 (f a) b c
+    let bind2 m f = m >>= fun (a, b, c) -> make2 a (f b) c
+    let bind3 m f = m >>= fun (a, b, c) -> make3 a b (f c)
+  end
+
+  module Tuple4 = struct
+    include Ap.Tuple4
+    module Tuple4 = BatTuple.Tuple4
+
+    let join (ma, mb, mc, md) =
+      ma >>= fun a ->
+      mb >>= fun b ->
+      mc >>= fun c ->
+      md >>= fun d -> return (Tuple4.make a b c d)
+
+    let bind1 m f = m >>= fun (a, b, c, d) -> make1 (f a) b c d
+    let bind2 m f = m >>= fun (a, b, c, d) -> make2 a (f b) c d
+    let bind3 m f = m >>= fun (a, b, c, d) -> make3 a b (f c) d
+    let bind4 m f = m >>= fun (a, b, c, d) -> make4 a b c (f d)
+  end
+
+  module Tuple5 = struct
+    include Ap.Tuple5
+    module Tuple5 = BatTuple.Tuple5
+
+    let join (ma, mb, mc, md, me) =
+      ma >>= fun a ->
+      mb >>= fun b ->
+      mc >>= fun c ->
+      md >>= fun d ->
+      me >>= fun e -> return (Tuple5.make a b c d e)
+
+    let bind1 m f = m >>= fun (a, b, c, d, e) -> make1 (f a) b c d e
+    let bind2 m f = m >>= fun (a, b, c, d, e) -> make2 a (f b) c d e
+    let bind3 m f = m >>= fun (a, b, c, d, e) -> make3 a b (f c) d e
+    let bind4 m f = m >>= fun (a, b, c, d, e) -> make4 a b c (f d) e
+    let bind5 m f = m >>= fun (a, b, c, d, e) -> make5 a b c d (f e)
   end
 end
