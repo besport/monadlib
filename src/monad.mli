@@ -57,6 +57,64 @@ module type S = sig
 
   val list_fold_righti : ('a -> int -> 'b -> 'b m) -> 'b -> 'a list -> 'b m
   (** like [List.fold_righti] but for monadic functions *)
+
+  module Tuple2 : sig
+    include module type of Ap.Tuple2
+
+    val join : 'a m * 'b m -> ('a * 'b) m
+    val bind1 : ('a * 'b) m -> ('a -> 'c m) -> ('c * 'b) m
+    val bind2 : ('a * 'b) m -> ('b -> 'c m) -> ('a * 'c) m
+  end
+
+  module Tuple3 : sig
+    include module type of Ap.Tuple3
+
+    val join : 'a m * 'b m * 'c m -> ('a * 'b * 'c) m
+    val bind1 : ('a * 'b * 'c) m -> ('a -> 'd m) -> ('d * 'b * 'c) m
+    val bind2 : ('a * 'b * 'c) m -> ('b -> 'd m) -> ('a * 'd * 'c) m
+    val bind3 : ('a * 'b * 'c) m -> ('c -> 'd m) -> ('a * 'b * 'd) m
+  end
+
+  module Tuple4 : sig
+    include module type of Ap.Tuple4
+
+    val join : 'a m * 'b m * 'c m * 'd m -> ('a * 'b * 'c * 'd) m
+    val bind1 : ('a * 'b * 'c * 'd) m -> ('a -> 'e m) -> ('e * 'b * 'c * 'd) m
+    val bind2 : ('a * 'b * 'c * 'd) m -> ('b -> 'e m) -> ('a * 'e * 'c * 'd) m
+    val bind3 : ('a * 'b * 'c * 'd) m -> ('c -> 'e m) -> ('a * 'b * 'e * 'd) m
+    val bind4 : ('a * 'b * 'c * 'd) m -> ('d -> 'e m) -> ('a * 'b * 'c * 'e) m
+  end
+
+  module Tuple5 : sig
+    include module type of Ap.Tuple5
+
+    val join : 'a m * 'b m * 'c m * 'd m * 'e m -> ('a * 'b * 'c * 'd * 'e) m
+
+    val bind1
+      :  ('a * 'b * 'c * 'd * 'e) m
+      -> ('a -> 'f m)
+      -> ('f * 'b * 'c * 'd * 'e) m
+
+    val bind2
+      :  ('a * 'b * 'c * 'd * 'e) m
+      -> ('b -> 'f m)
+      -> ('a * 'f * 'c * 'd * 'e) m
+
+    val bind3
+      :  ('a * 'b * 'c * 'd * 'e) m
+      -> ('c -> 'f m)
+      -> ('a * 'b * 'f * 'd * 'e) m
+
+    val bind4
+      :  ('a * 'b * 'c * 'd * 'e) m
+      -> ('d -> 'f m)
+      -> ('a * 'b * 'c * 'f * 'e) m
+
+    val bind5
+      :  ('a * 'b * 'c * 'd * 'e) m
+      -> ('e -> 'f m)
+      -> ('a * 'b * 'c * 'd * 'f) m
+  end
 end
 
 module Make (M : BatInterfaces.Monad) : S with type 'a m = 'a M.m

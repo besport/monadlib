@@ -106,7 +106,131 @@ module type S = sig
 
   (** {1 Tuple functions *)
 
-  val split : ('a * 'b) m -> 'a m * 'b m
+  module Tuple2 : sig
+    val split : ('a * 'b) m -> 'a m * 'b m
+    val make1 : 'a m -> 'b -> ('a * 'b) m
+    val make2 : 'a -> 'b m -> ('a * 'b) m
+    val map1 : ('a -> 'c) -> ('a * 'b) m -> ('c * 'b) m
+    val map2 : ('b -> 'c) -> ('a * 'b) m -> ('a * 'c) m
+    val curry1 : ('a * 'b -> 'c) -> 'a m -> 'b -> 'c m
+    val curry2 : ('a * 'b -> 'c) -> 'a -> 'b m -> 'c m
+    val uncurry : ('a -> 'b -> 'c) -> ('a * 'b) m -> 'c m
+  end
+
+  module Tuple3 : sig
+    val split : ('a * 'b * 'c) m -> 'a m * 'b m * 'c m
+    val make1 : 'a m -> 'b -> 'c -> ('a * 'b * 'c) m
+    val make2 : 'a -> 'b m -> 'c -> ('a * 'b * 'c) m
+    val make3 : 'a -> 'b -> 'c m -> ('a * 'b * 'c) m
+    val map1 : ('a -> 'd) -> ('a * 'b * 'c) m -> ('d * 'b * 'c) m
+    val map2 : ('b -> 'd) -> ('a * 'b * 'c) m -> ('a * 'd * 'c) m
+    val map3 : ('c -> 'd) -> ('a * 'b * 'c) m -> ('a * 'b * 'd) m
+    val curry1 : ('a * 'b * 'c -> 'd) -> 'a m -> 'b -> 'c -> 'd m
+    val curry2 : ('a * 'b * 'c -> 'd) -> 'a -> 'b m -> 'c -> 'd m
+    val curry3 : ('a * 'b * 'c -> 'd) -> 'a -> 'b -> 'c m -> 'd m
+    val uncurry : ('a -> 'b -> 'c -> 'd) -> ('a * 'b * 'c) m -> 'd m
+  end
+
+  module Tuple4 : sig
+    val split : ('a * 'b * 'c * 'd) m -> 'a m * 'b m * 'c m * 'd m
+    val make1 : 'a m -> 'b -> 'c -> 'd -> ('a * 'b * 'c * 'd) m
+    val make2 : 'a -> 'b m -> 'c -> 'd -> ('a * 'b * 'c * 'd) m
+    val make3 : 'a -> 'b -> 'c m -> 'd -> ('a * 'b * 'c * 'd) m
+    val make4 : 'a -> 'b -> 'c -> 'd m -> ('a * 'b * 'c * 'd) m
+    val map1 : ('a -> 'e) -> ('a * 'b * 'c * 'd) m -> ('e * 'b * 'c * 'd) m
+    val map2 : ('b -> 'e) -> ('a * 'b * 'c * 'd) m -> ('a * 'e * 'c * 'd) m
+    val map3 : ('c -> 'e) -> ('a * 'b * 'c * 'd) m -> ('a * 'b * 'e * 'd) m
+    val map4 : ('d -> 'e) -> ('a * 'b * 'c * 'd) m -> ('a * 'b * 'c * 'e) m
+    val curry1 : ('a * 'b * 'c * 'd -> 'e) -> 'a m -> 'b -> 'c -> 'd -> 'e m
+    val curry2 : ('a * 'b * 'c * 'd -> 'e) -> 'a -> 'b m -> 'c -> 'd -> 'e m
+    val curry3 : ('a * 'b * 'c * 'd -> 'e) -> 'a -> 'b -> 'c m -> 'd -> 'e m
+    val curry4 : ('a * 'b * 'c * 'd -> 'e) -> 'a -> 'b -> 'c -> 'd m -> 'e m
+    val uncurry : ('a -> 'b -> 'c -> 'd -> 'e) -> ('a * 'b * 'c * 'd) m -> 'e m
+  end
+
+  module Tuple5 : sig
+    val split : ('a * 'b * 'c * 'd * 'e) m -> 'a m * 'b m * 'c m * 'd m * 'e m
+    val make1 : 'a m -> 'b -> 'c -> 'd -> 'e -> ('a * 'b * 'c * 'd * 'e) m
+    val make2 : 'a -> 'b m -> 'c -> 'd -> 'e -> ('a * 'b * 'c * 'd * 'e) m
+    val make3 : 'a -> 'b -> 'c m -> 'd -> 'e -> ('a * 'b * 'c * 'd * 'e) m
+    val make4 : 'a -> 'b -> 'c -> 'd m -> 'e -> ('a * 'b * 'c * 'd * 'e) m
+    val make5 : 'a -> 'b -> 'c -> 'd -> 'e m -> ('a * 'b * 'c * 'd * 'e) m
+
+    val map1
+      :  ('a -> 'f)
+      -> ('a * 'b * 'c * 'd * 'e) m
+      -> ('f * 'b * 'c * 'd * 'e) m
+
+    val map2
+      :  ('b -> 'f)
+      -> ('a * 'b * 'c * 'd * 'e) m
+      -> ('a * 'f * 'c * 'd * 'e) m
+
+    val map3
+      :  ('c -> 'f)
+      -> ('a * 'b * 'c * 'd * 'e) m
+      -> ('a * 'b * 'f * 'd * 'e) m
+
+    val map4
+      :  ('d -> 'f)
+      -> ('a * 'b * 'c * 'd * 'e) m
+      -> ('a * 'b * 'c * 'f * 'e) m
+
+    val map5
+      :  ('e -> 'f)
+      -> ('a * 'b * 'c * 'd * 'e) m
+      -> ('a * 'b * 'c * 'd * 'f) m
+
+    val curry1
+      :  ('a * 'b * 'c * 'd * 'e -> 'f)
+      -> 'a m
+      -> 'b
+      -> 'c
+      -> 'd
+      -> 'e
+      -> 'f m
+
+    val curry2
+      :  ('a * 'b * 'c * 'd * 'e -> 'f)
+      -> 'a
+      -> 'b m
+      -> 'c
+      -> 'd
+      -> 'e
+      -> 'f m
+
+    val curry3
+      :  ('a * 'b * 'c * 'd * 'e -> 'f)
+      -> 'a
+      -> 'b
+      -> 'c m
+      -> 'd
+      -> 'e
+      -> 'f m
+
+    val curry4
+      :  ('a * 'b * 'c * 'd * 'e -> 'f)
+      -> 'a
+      -> 'b
+      -> 'c
+      -> 'd m
+      -> 'e
+      -> 'f m
+
+    val curry5
+      :  ('a * 'b * 'c * 'd * 'e -> 'f)
+      -> 'a
+      -> 'b
+      -> 'c
+      -> 'd
+      -> 'e m
+      -> 'f m
+
+    val uncurry
+      :  ('a -> 'b -> 'c -> 'd -> 'e -> 'f)
+      -> ('a * 'b * 'c * 'd * 'e) m
+      -> 'f m
+  end
 end
 
 module Make (A : T) : S with type 'a m = 'a A.m
